@@ -21,16 +21,16 @@ export default function BookCarousel() {
   });
   const books: BookType[] = useMemo(() => data?.data || [], [data?.data]);
   const [imageUrls, setImageUrls] = useState<Record<string, string>>({});
-  const [isFatching, setIsFatching] = useState<boolean>(false);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchImages = async () => {
       const urls: Record<string, string> = {};
       for (const book of books) {
         try {
-          setIsFatching(true);
+          setIsFetching(true);
           urls[book._id] = await convertImg(book._id);
-          setIsFatching(false);
+          setIsFetching(false);
         } catch (error) {
           console.error(`Failed to load image for book ${book._id}:`, error);
           urls[book._id] = '/placeholder-image.png';
@@ -62,7 +62,7 @@ export default function BookCarousel() {
             <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
               <div>
                 <div>
-                  {isFatching ? (<div>
+                  {isFetching ? (<div>
                     <Skeleton className="h-[100px] w-[100px] rounded-full"/>
                     <div className="space-y-2">
                       <Skeleton className="h-5 w-[250px]"/>
