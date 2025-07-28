@@ -1,0 +1,18 @@
+.star-rating button {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.star-rating .on {
+    color: gold; /* Color for selected/hovered stars */
+}
+
+.star-rating .off {
+    color: lightgray; /* Color for unselected stars */
+}
+
+.star {
+    font-size: 2rem; /* Adjust size as needed */
+}
