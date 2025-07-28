@@ -11,6 +11,7 @@ import {useQuery} from "@tanstack/react-query";
 import {convertImg, getBooks} from "@/services/apiBooks.ts";
 import type {BookType} from "@/types/BookType.ts";
 import {Skeleton} from "@/components/ui/skeleton"
+import Stars from "@/components/ui/Stars.tsx";
 
 
 export default function BookCarousel() {
@@ -48,6 +49,7 @@ export default function BookCarousel() {
       <Carousel
         opts={{
           loop: true,
+          watchDrag: false,
         }}
         plugins={[
           Autoplay({
@@ -71,7 +73,14 @@ export default function BookCarousel() {
                     alt={book.title}
                     className='max-w-[250px] max-h-[300px]'
                   />}
-                  <h3>{book.title}</h3>
+                  <span className="text-xl">{book.title}</span>
+                  <div className="flex ">
+                    <span className="text-xl">{book.averageRating}</span>
+                    <span className="text-xl"><Stars averageRating={book.averageRating}/></span>
+                    <span className="text-base"> {book.reviewsCount}</span>
+                  </div>
+                  <span>R$ {(book.price.toFixed(2))}</span>
+
                 </div>
               </div>
             </CarouselItem>
@@ -83,41 +92,3 @@ export default function BookCarousel() {
     </div>
   );
 }
-
-/*      <Carousel
-        opts={{
-          align: "start",
-          loop: true,
-        }}
-        plugins={[
-          Autoplay({
-            delay: 5000,
-          }),
-        ]}
-      >
-        <CarouselContent className="-ml-4">
-          {books.map((book, index) => (
-            <CarouselItem key={index} className="pl-4">
-              <Card>
-                <CardContent>
-                  {isFatching ? (<div className="flex flex-col items-center space-y-2">
-                    <Skeleton className="h-[100px] w-[100px] rounded-full"/>
-                    <div className="space-y-2">
-                      <Skeleton className="h-5 w-[250px]"/>
-                      <Skeleton className="h-5 w-[250px]"/>
-                    </div>
-                  </div>) : <img
-                    src={imageUrls[book._id] || `${book.coverImage}`}
-                    alt={book.title}
-                    className='max-w-[250px] max-h-[300px]'
-                  />}
-                  <h3>{book.title}</h3>
-                </CardContent>
-              </Card>
-
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious/>
-        <CarouselNext/>
-      </Carousel>*/
