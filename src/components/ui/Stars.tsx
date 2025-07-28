@@ -1,5 +1,3 @@
-import './stars.css';
-
 export default function Stars({averageRating}:{averageRating: number}) {
 
 
@@ -10,7 +8,7 @@ export default function Stars({averageRating}:{averageRating: number}) {
         return (
           <span
             key={index}
-            className={index <=  averageRating ? 'on' : 'off'}
+            className={index <=  averageRating ? "text-amber-400" : 'text-stone-300'}
           >
             <span>&#9733;</span> {/* Unicode star */}
           </span>

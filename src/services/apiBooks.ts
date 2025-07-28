@@ -1,13 +1,16 @@
 export async function getBooks(): Promise<any> {
-  const response = await fetch('http://localhost:3000/books');
-  const data = await response.json();
-  // console.log(data);
-  return data;
+  try {
+    const response = await fetch('http://localhost:3000/books');
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(`Failed to load books`, error);
+  }
 }
 
 export async function getImageBook(bookId: string): Promise<string> {
   const response = await fetch(`http://localhost:3000/books/${bookId}/cover`);
-  const data = await  response.json()
+  const data = await response.json()
   return data.image
 }
 

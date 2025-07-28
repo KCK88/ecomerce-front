@@ -1,4 +1,4 @@
-import {useState, useEffect, useMemo} from "react";
+import {useMemo} from "react";
 import {
   Carousel,
   CarouselContent,
@@ -20,29 +20,24 @@ export default function BookCarousel() {
     queryFn: getBooks
   });
   const books: BookType[] = useMemo(() => data?.data || [], [data?.data]);
-  const [imageUrls, setImageUrls] = useState<Record<string, string>>({});
-  const [isFetching, setIsFetching] = useState<boolean>(false);
 
-  useEffect(() => {
-    const fetchImages = async () => {
+  const { data: imageUrls, isPending: isImagesLoading } = useQuery({
+    queryKey: ['book-images', books.map(book => book._id)],
+    queryFn: async () => {
       const urls: Record<string, string> = {};
-      for (const book of books) {
+      console.log(urls)
+      await Promise.all(books.map(async (book: BookType) => {
         try {
-          setIsFetching(true);
           urls[book._id] = await convertImg(book._id);
-          setIsFetching(false);
         } catch (error) {
           console.error(`Failed to load image for book ${book._id}:`, error);
           urls[book._id] = '/placeholder-image.png';
         }
-      }
-      setImageUrls(urls);
-    };
-
-    if (books.length > 0) {
-      fetchImages();
-    }
-  }, [books]);
+      }));
+      return urls;
+    },
+    enabled: books.length > 0 // Não tiver libros não executa
+  });
 
   return (
     <div className="flex flex-col p-12">
@@ -62,14 +57,14 @@ export default function BookCarousel() {
             <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
               <div>
                 <div>
-                  {isFetching ? (<div>
+                  {isImagesLoading ? (<div>
                     <Skeleton className="h-[100px] w-[100px] rounded-full"/>
                     <div className="space-y-2">
                       <Skeleton className="h-5 w-[250px]"/>
                       <Skeleton className="h-5 w-[250px]"/>
                     </div>
                   </div>) : <img
-                    src={imageUrls[book._id] || `${book.coverImage}`}
+                    src={imageUrls?.[book._id] || `${book.coverImage}`}
                     alt={book.title}
                     className='max-w-[250px] max-h-[300px]'
                   />}
