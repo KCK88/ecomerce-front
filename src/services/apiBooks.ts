@@ -1,11 +1,7 @@
 export async function getBooks(): Promise<any> {
-  try {
-    const response = await fetch('http://localhost:3000/books');
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(`Failed to load books`, error);
-  }
+  const response = await fetch('http://localhost:3000/books');
+  const data = await response.json();
+  return data;
 }
 
 export async function getImageBook(bookId: string): Promise<string> {
@@ -32,4 +28,3 @@ export async function convertImg(base: string) {
   const blob = new Blob([u8arr], {type: mime});
   return URL.createObjectURL(blob)
 }
-
