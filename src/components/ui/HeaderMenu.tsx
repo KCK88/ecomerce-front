@@ -1,11 +1,13 @@
 import Logo from "@/components/ui/Logo.tsx";
 import {useQuery} from "@tanstack/react-query";
-import {Search, ShoppingCartIcon} from "lucide-react";
+import {MapPin, Search, ShoppingCartIcon} from "lucide-react";
 import {getCategories} from "@/services/apiCategories.ts";
 import type {CategoryType} from "@/types/CategoryType.ts";
 import {useMemo} from "react";
 import {type SubmitHandler, useForm} from "react-hook-form";
 import {useNavigate} from "react-router";
+import Modal from "@/components/ui/Modal.tsx";
+import ModalUser from "@/components/ui/ModalUser.tsx";
 
 type Inputs = {
   category: string
@@ -32,7 +34,7 @@ export default function HeaderMenu() {
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.log(data)
-      navigate(`/home?page=1&limit=1&category=${data.category}&search=${data.search}`);
+    navigate(`/home?page=1&limit=1&category=${data.category}&search=${data.search}`);
   }
 
 
@@ -40,7 +42,10 @@ export default function HeaderMenu() {
     <div>
       <ul className="p-2 flex fllex-col gap-1">
         <li><Logo/></li>
-        <li><span>Location</span></li>
+        <li className="flex flex-col items-center">
+          <span className="text-[10px]">Enviar para</span>
+          <div className="flex"><MapPin /><span className="font-bold">02161110</span></div>
+        </li>
         <li className="flex-auto">
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -71,9 +76,12 @@ export default function HeaderMenu() {
             </button>
           </form>
         </li>
-        <li onClick={() => navigate('/login')} className="cursor-pointer items-center flex flex-col">
-          <span>Ola, faça login</span>
-          <span>Wishlist</span>
+        <li className="items-center flex flex-col" onClick={() => navigate('/login')} >
+          <Modal text={`Ola, faça login \nWishlist`}>
+            <div className="w-[200px]">
+              <ModalUser/>
+            </div>
+          </Modal>
         </li>
         <li onClick={() => navigate('/order')} className="cursor-pointer items-center flex flex-col">
           <span>Compras</span>
