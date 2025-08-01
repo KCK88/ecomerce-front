@@ -4,6 +4,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
+body {
+  font-family: 'Roboto', sans-serif;
+
+}
+button {
+  font-family: 'Roboto', sans-serif;
+}
 
 @tailwind utilities;
 

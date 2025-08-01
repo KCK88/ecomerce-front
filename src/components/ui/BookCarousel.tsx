@@ -25,7 +25,6 @@ export default function BookCarousel() {
     queryKey: ['book-images', books.map(book => book._id)],
     queryFn: async () => {
       const urls: Record<string, string> = {};
-      console.log(urls)
       await Promise.all(books.map(async (book: BookType) => {
         try {
           urls[book._id] = await convertImg(book._id);
