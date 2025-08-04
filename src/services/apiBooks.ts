@@ -10,6 +10,18 @@ export async function getImageBook(bookId: string): Promise<string> {
   return data.image
 }
 
+export async function getSearchBook(page: number, limit: number, params: string): Promise<any> {
+  const response = await fetch(`http://localhost:3000/books/${page}/${limit}/search?key=${params}`);
+  const data = await response.json()
+  return data
+}
+
+export async function getCategoryBook(page: number, limit: number, params: string): Promise<any> {
+  const response = await fetch(`http://localhost:3000/books/${page}/${limit}/category?key=${params}`);
+  const data = await response.json()
+  return data
+}
+
 export async function convertImg(base: string) {
   const dataUrl = await getImageBook(base);
 

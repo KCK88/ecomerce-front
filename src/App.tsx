@@ -6,10 +6,11 @@ import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {ReactQueryDevtools} from "@tanstack/react-query-devtools";
 import Login from "@/components/pages/Login.tsx";
 import OrdersPage from "@/components/pages/Orders.tsx";
+import SearchResult from "@/components/pages/SearchResult.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: {staleTime: 60000},
+    queries: {staleTime: 5},
   }
 })
 
@@ -26,6 +27,7 @@ function App() {
               <Route path='cart' element={<Cart/>}/>
               <Route path='login' element={<Login/>}/>
               <Route path='order' element={<OrdersPage/>}/>
+              <Route path='search' element={<SearchResult/>}/>
             </Route>
           </Routes>
         </BrowserRouter>
