@@ -1,6 +1,6 @@
 import {useSearchParams} from 'react-router-dom';
 import {useQuery} from "@tanstack/react-query";
-import {convertImg, getCategoryBook, getSearchBook} from "@/services/apiBooks.ts";
+import {convertImg, getSearchBook} from "@/services/apiBooks.ts";
 import type {BookType} from "@/types/BookType.ts";
 import {useMemo} from "react";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
@@ -16,16 +16,19 @@ export default function SearchResult() {
   const search = searchParams.get('search')
 
   const {data} = useQuery({
-    queryKey: ['search-books'],
+    queryKey: ['search-books', page, limit, category, search],
     queryFn: async () => {
-      if (search && category === '') {
-        return await getSearchBook(page, limit, search);
+      try {
+        if (category || search) {
+          return await getSearchBook(page, limit, search, category);
+        }
+      } catch (error) {
+        return {data: []}
       }
-      if (category && search === '') {
-        return await getCategoryBook(page, limit, search);
-      }
-    }
+    },
+
   })
+
   const books: BookType[] = useMemo(() => data?.data || [], [data?.data]);
 
   const {data: imageUrls, isPending: isImagesLoading} = useQuery({

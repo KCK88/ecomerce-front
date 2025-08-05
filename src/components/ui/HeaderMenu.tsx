@@ -55,9 +55,9 @@ export default function HeaderMenu() {
               className="text-sm text-gray-700 px-3 py-2 bg-gray-100 border-r border-gray-300 outline-none"
               {...register("category")}
             >
-              <option value="" disabled hidden>Categoria</option>
+              <option value="" /*disabled hidden*/>Categoria</option>
               {categories.map((category: CategoryType) => (
-                <option key={category.id} value={category.genre}>{category.name}</option>
+                <option key={category.id} value={category.genre}>{category.genre}</option>
               ))}
             </select>
 
