@@ -12,9 +12,12 @@ import {convertImg, getBooks} from "@/services/apiBooks.ts";
 import type {BookType} from "@/types/BookType.ts";
 import {Skeleton} from "@/components/ui/skeleton"
 import Stars from "@/components/ui/Stars.tsx";
+import {useNavigate} from "react-router";
 
 
 export default function BookCarousel() {
+  const navigate = useNavigate();
+
   const {data} = useQuery({
     queryKey: ['books'],
     queryFn: getBooks
@@ -65,7 +68,8 @@ export default function BookCarousel() {
                   </div>) : <img
                     src={imageUrls?.[book._id] || `${book.coverImage}`}
                     alt={book.title}
-                    className='max-w-[250px] max-h-[300px]'
+                    onClick={()=> navigate(`/product/${book._id}`)}
+                    className='max-w-[250px] max-h-[300px] cursor-pointer'
                   />}
                   <span className="text-xl">{book.title}</span>
                   <div className="flex ">

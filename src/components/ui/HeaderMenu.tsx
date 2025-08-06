@@ -34,7 +34,7 @@ export default function HeaderMenu() {
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.log(data)
-    navigate(`/home?page=1&limit=1&category=${data.category}&search=${data.search}`);
+    navigate(`/search?page=0&limit=10&category=${data.category}&search=${data.search}`);
   }
 
 
@@ -44,7 +44,7 @@ export default function HeaderMenu() {
         <li><Logo/></li>
         <li className="flex flex-col items-center">
           <span className="text-[10px]">Enviar para</span>
-          <div className="flex"><MapPin /><span className="font-bold">02161110</span></div>
+          <div className="flex"><MapPin/><span className="font-bold">02161110</span></div>
         </li>
         <li className="flex-auto">
           <form
@@ -55,9 +55,9 @@ export default function HeaderMenu() {
               className="text-sm text-gray-700 px-3 py-2 bg-gray-100 border-r border-gray-300 outline-none"
               {...register("category")}
             >
-              <option value="" disabled hidden>Categoria</option>
+              <option value="" /*disabled hidden*/>Categoria</option>
               {categories.map((category: CategoryType) => (
-                <option key={category.id} value={category.id}>{category.name}</option>
+                <option key={category.id} value={category.genre}>{category.genre}</option>
               ))}
             </select>
 
@@ -76,7 +76,7 @@ export default function HeaderMenu() {
             </button>
           </form>
         </li>
-        <li className="items-center flex flex-col" onClick={() => navigate('/login')} >
+        <li className="items-center flex flex-col" onClick={() => navigate('/login')}>
           <Modal text={`Ola, faça login \nWishlist`}>
             <div className="w-[200px]">
               <ModalUser/>
