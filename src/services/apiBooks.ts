@@ -22,6 +22,12 @@ export async function getCategoryBook(page: number, limit: number, params: strin
   return data
 }
 
+export async function getBook(id: string): Promise<any> {
+  const response = await fetch(`http://localhost:3000/books/${id}`);
+  const data = await response.json()
+  return data
+}
+
 export async function convertImg(base: string) {
   const dataUrl = await getImageBook(base);
 

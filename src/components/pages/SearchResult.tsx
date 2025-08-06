@@ -6,9 +6,11 @@ import {useMemo} from "react";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {dateFormater} from "@/utils/dateFormater.ts";
 import Stars from "@/components/ui/Stars.tsx";
+import {useNavigate} from "react-router";
 
 export default function SearchResult() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const page = Number(searchParams.get('page'))
   const limit = Number(searchParams.get('limit'))
@@ -63,7 +65,8 @@ export default function SearchResult() {
             </div>) : <img
               src={imageUrls?.[book._id] || `${book.coverImage}`}
               alt={book.title}
-              className='max-w-[150px] max-h-[200px] border-[20px]'
+              onClick={()=> navigate(`/product/${book._id}`)}
+              className='max-w-[150px] max-h-[200px] border-[20px] cursor-pointer'
             />}
             </div>
             <div className="flex flex-col">
