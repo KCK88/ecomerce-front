@@ -58,3 +58,6 @@ export function getCart(): CartItem[] {
 export function clearCart(): void {
   localStorage.removeItem('cart');
 }
+export function addOrder(books: CartItem[]) {
+  localStorage.setItem('order', JSON.stringify(books))
+}

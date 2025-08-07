@@ -1,14 +1,35 @@
-import {addItem, getCart, removeFromCart, removeItem} from "@/utils/cartHandlers.ts";
+import {addItem, addOrder, getCart, removeFromCart, removeItem} from "@/utils/cartHandlers.ts";
 import {BookMinus, BookPlus, BookX} from 'lucide-react';
+import {useEffect, useState} from "react";
+import type {CartItem} from "@/types/CartItem.ts";
 
 
 export default function Cart() {
-  const books = getCart()
+  const [total, setTotal] = useState(0);
+  const [books, setBooks] = useState(getCart())
 
-  const total = books.reduce(
-    (acc, item) => acc + (item.price * item.quantity), 0
-  );
+  useEffect(() => {
+    setTotal(books.reduce((acc, item) => acc + (item.price * item.quantity), 0))
+  }, [books]);
 
+  function handleAddOrder(order: CartItem[]) {
+    addOrder(order);
+  }
+
+  function handleAddItem(item: CartItem) {
+    addItem(item);
+    setBooks(getCart());
+  };
+
+  function handleRemoveItem(item: CartItem) {
+    removeItem(item);
+    setBooks(getCart());
+  };
+
+  function handleRemoveFromCart(id: string) {
+    removeFromCart(id);
+    setBooks(getCart());
+  };
 
   return (
     <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-6">
@@ -25,14 +46,14 @@ export default function Cart() {
                 <div className="flex items-center space-x-4">
                   <button
                     onClick={() =>
-                      item.quantity === 1 ? removeFromCart(item.id) : removeItem(item)
+                      item.quantity === 1 ? handleRemoveFromCart(item.id) : handleRemoveItem(item)
                     }
                   >
                     {item.quantity === 1 ? <BookX/> : <BookMinus/>}
                   </button>
                   <span className="text-stone-600">{item.quantity}x</span>
                   <button
-                    onClick={() => addItem(item)}
+                    onClick={() => handleAddItem(item)}
                   >
                     <BookPlus/>
                   </button>
@@ -50,7 +71,9 @@ export default function Cart() {
           </div>
 
           <button
-            className="mt-6 w-full bg-stone-600 hover:bg-stone-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+            className="mt-6 w-full bg-stone-600 hover:bg-stone-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
+            onClick={()=> handleAddOrder(books)}
+          >
             Finalizar Compra
           </button>
         </div>
