@@ -7,11 +7,14 @@ import type {BookType} from "@/types/BookType.ts";
 import {ChevronDown, ChevronUp} from "lucide-react";
 import Stars from "@/components/ui/Stars.tsx";
 import {dateFormater} from "@/utils/dateFormater.ts";
+import {addToCart} from "@/utils/cartHandlers.ts";
+import {useNavigate} from "react-router";
 
 
 export default function Product() {
   const [isExpanded, setIsExpanded] = useState(false);
   const {bookId} = useParams();
+  const navigate = useNavigate();
 
   const {data, isPending} = useQuery({
     queryKey: ['book', bookId],
@@ -116,11 +119,18 @@ export default function Product() {
 
           <div  className="flex mb-6 gap-4">
             <button
-              className="w-full md:w-auto bg-stone-600 hover:bg-stone-700 text-white font-bold py-3 px-8 rounded-lg transition duration-200">
+              className="w-full md:w-auto bg-stone-600 hover:bg-stone-700 text-white font-bold py-3 px-8 rounded-lg transition duration-200"
+              onClick={()=> {
+                navigate('/cart')
+                addToCart(book)
+              }}
+            >
               Comprar Agora
             </button>
             <button
-              className="w-full md:w-auto bg-stone-700 hover:bg-stone-800 text-white font-bold py-3 px-8 rounded-lg transition duration-200">
+              className="w-full md:w-auto bg-stone-700 hover:bg-stone-800 text-white font-bold py-3 px-8 rounded-lg transition duration-200"
+              onClick={()=> addToCart(book)}
+            >
               Adicionar ao carrinho
             </button>
 

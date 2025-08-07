@@ -1,58 +1,63 @@
-const itens = [
-  {
-    id: 1,
-    title: 'Dom Casmurro',
-    quantity: 1,
-    price: 26.90,
-    status: 'completed',
-    date: '2023-05-15'
-  },
-  {
-    id: 2,
-    title: 'O Hobbit',
-    quantity: 2,
-    price: 76.6,
-    status: 'pending',
-    date: '2023-06-20'
-  },
-  {
-    id: 3,
-    title: 'Maus',
-    quantity: 1,
-    price: 53,
-    status: 'pending',
-    date: '2023-06-22'
-  },
-  {
-    id: 4,
-    title: 'Rápido e devagar: Duas formas de pensar',
-    quantity: 1,
-    price: 61.49,
-    status: 'cancelled',
-    date: '2023-05-30'
-  }
-];
+import {addItem, addOrder, getCart, removeFromCart, removeItem} from "@/utils/cartHandlers.ts";
+import {BookMinus, BookPlus, BookX} from 'lucide-react';
+import {useEffect, useState} from "react";
+import type {CartItem} from "@/types/CartItem.ts";
 
-const total = itens.reduce(
-  (acc, item) => acc + (item.price * item.quantity), 0
-);
 
 export default function Cart() {
+  const [total, setTotal] = useState(0);
+  const [books, setBooks] = useState(getCart())
+
+  useEffect(() => {
+    setTotal(books.reduce((acc, item) => acc + (item.price * item.quantity), 0))
+  }, [books]);
+
+  function handleAddOrder(order: CartItem[]) {
+    addOrder(order);
+  }
+
+  function handleAddItem(item: CartItem) {
+    addItem(item);
+    setBooks(getCart());
+  };
+
+  function handleRemoveItem(item: CartItem) {
+    removeItem(item);
+    setBooks(getCart());
+  };
+
+  function handleRemoveFromCart(id: string) {
+    removeFromCart(id);
+    setBooks(getCart());
+  };
+
   return (
     <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-6">
       <h2 className="text-2xl font-bold text-stone-800 mb-4">Carrinho de Compras</h2>
 
-      {itens.length === 0 ? (
+      {books.length === 0 ? (
         <p className="text-stone-600">Seu carrinho está vazio</p>
       ) : (
         <div>
           <ul className="divide-y divide-stone-200">
-            {itens.map((item) => (
+            {books.map((item) => (
               <li key={item.id} className="py-4 flex justify-between items-center">
                 <span className="text-stone-800 font-medium">{item.title}</span>
                 <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() =>
+                      item.quantity === 1 ? handleRemoveFromCart(item.id) : handleRemoveItem(item)
+                    }
+                  >
+                    {item.quantity === 1 ? <BookX/> : <BookMinus/>}
+                  </button>
                   <span className="text-stone-600">{item.quantity}x</span>
-                  <span className="text-stone-800 font-medium">R$ {item.price.toFixed(2)}</span>
+                  <button
+                    onClick={() => handleAddItem(item)}
+                  >
+                    <BookPlus/>
+                  </button>
+                  <span className="text-stone-800 font-medium">R$ {(item.quantity * item.price).toFixed(2)}</span>
                 </div>
               </li>
             ))}
@@ -65,7 +70,10 @@ export default function Cart() {
             </strong>
           </div>
 
-          <button className="mt-6 w-full bg-stone-600 hover:bg-stone-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+          <button
+            className="mt-6 w-full bg-stone-600 hover:bg-stone-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
+            onClick={()=> handleAddOrder(books)}
+          >
             Finalizar Compra
           </button>
         </div>

@@ -47,7 +47,7 @@ export default function SearchResult() {
       }));
       return urls;
     },
-    enabled: books.length > 0 // Não tiver libros não executa
+    enabled: books.length > 0
   });
 
 
@@ -89,14 +89,3 @@ export default function SearchResult() {
     </div>
   )
 }
-/*  const {data} = useQuery({
-    queryKey: ['search-books'],
-    queryFn: async () => {
-      if (search && category === '') {
-        return await getSearchBook(page, limit, search);
-      }
-      if (category && search === '') {
-        return await getCategoryBook(page, limit, search);
-      }
-    }
-  })*/
