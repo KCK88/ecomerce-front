@@ -2,11 +2,13 @@ import {addItem, addOrder, getCart, removeFromCart, removeItem} from "@/utils/ca
 import {BookMinus, BookPlus, BookX} from 'lucide-react';
 import {useEffect, useState} from "react";
 import type {CartItem} from "@/types/CartItem.ts";
+import {useNavigate} from "react-router";
 
 
 export default function Cart() {
   const [total, setTotal] = useState(0);
   const [books, setBooks] = useState(getCart())
+  const navigate = useNavigate();
 
   useEffect(() => {
     setTotal(books.reduce((acc, item) => acc + (item.price * item.quantity), 0))
@@ -36,7 +38,15 @@ export default function Cart() {
       <h2 className="text-2xl font-bold text-stone-800 mb-4">Carrinho de Compras</h2>
 
       {books.length === 0 ? (
-        <p className="text-stone-600">Seu carrinho está vazio</p>
+        <div>
+          <p className="text-stone-600">Seu carrinho está vazio</p>
+          <button
+            onClick={()=>navigate('/')}
+            className="mt-6 w-full bg-stone-600 hover:bg-stone-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
+          >
+            Pagina inicial
+          </button>
+        </div>
       ) : (
         <div>
           <ul className="divide-y divide-stone-200">
@@ -72,7 +82,7 @@ export default function Cart() {
 
           <button
             className="mt-6 w-full bg-stone-600 hover:bg-stone-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
-            onClick={()=> handleAddOrder(books)}
+            onClick={() => handleAddOrder(books)}
           >
             Finalizar Compra
           </button>
