@@ -1,6 +1,6 @@
 import type {PostType} from "@/types/PostType.ts";
 
-const token = ''
+// const token = ''
 
 export async function loginPost (postData: PostType): Promise<Response> {
   const response = await fetch('http://localhost:3000/login', {

@@ -7,7 +7,7 @@ import {useNavigate} from "react-router";
 export default function Login() {
   const navigate = useNavigate();
   const {
-    mutate, isPending: isLogin, error, isError, isSuccess
+    mutate, isPending: isLogin, isError
   } = useMutation({
     mutationFn: loginPost,
     onSuccess: (data) => {
@@ -25,7 +25,8 @@ export default function Login() {
 
   const onSubmit: SubmitHandler<LoginInputs> = (data) => {
     mutate(data);
-    if (isSuccess) navigate('/');
+    console.log(isError)
+    if (!isError) navigate('/');
   }
 
   return (
