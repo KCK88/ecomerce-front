@@ -8,6 +8,7 @@ import Login from "@/components/pages/Login.tsx";
 import OrdersPage from "@/components/pages/Orders.tsx";
 import SearchResult from "@/components/pages/SearchResult.tsx";
 import Product from "@/components/pages/Product.tsx";
+import Account from "@/components/pages/Account.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,6 +31,7 @@ function App() {
               <Route path='order' element={<OrdersPage/>}/>
               <Route path='search' element={<SearchResult/>}/>
               <Route path='product/:bookId' element={<Product/>}/>
+              <Route path='account' element={<Account/>}/>
             </Route>
           </Routes>
         </BrowserRouter>

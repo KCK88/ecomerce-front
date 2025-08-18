@@ -1,4 +1,4 @@
-import {addItem, addOrder, getCart, removeFromCart, removeItem} from "@/utils/cartHandlers.ts";
+import {addOrder, getCart, updateCart} from "@/utils/cartHandlers.ts";
 import {BookMinus, BookPlus, BookX} from 'lucide-react';
 import {useEffect, useState} from "react";
 import type {CartItem} from "@/types/CartItem.ts";
@@ -10,26 +10,25 @@ export default function Cart() {
   const [books, setBooks] = useState(getCart())
   const navigate = useNavigate();
 
+
+
   useEffect(() => {
     setTotal(books.reduce((acc, item) => acc + (item.price * item.quantity), 0))
   }, [books]);
 
   function handleAddOrder(order: CartItem[]) {
+    console.log('handleAddOrder', order);
+    setBooks(order);
     addOrder(order);
   }
 
   function handleAddItem(item: CartItem) {
-    addItem(item);
+    updateCart(item, 'add');
     setBooks(getCart());
   };
 
   function handleRemoveItem(item: CartItem) {
-    removeItem(item);
-    setBooks(getCart());
-  };
-
-  function handleRemoveFromCart(id: string) {
-    removeFromCart(id);
+    updateCart(item,'remove');
     setBooks(getCart());
   };
 
@@ -55,8 +54,7 @@ export default function Cart() {
                 <span className="text-stone-800 font-medium">{item.title}</span>
                 <div className="flex items-center space-x-4">
                   <button
-                    onClick={() =>
-                      item.quantity === 1 ? handleRemoveFromCart(item.id) : handleRemoveItem(item)
+                    onClick={() => handleRemoveItem(item)
                     }
                   >
                     {item.quantity === 1 ? <BookX/> : <BookMinus/>}

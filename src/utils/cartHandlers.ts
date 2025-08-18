@@ -1,53 +1,42 @@
 import type {CartItem} from "@/types/CartItem.ts";
 import type {BookType} from "@/types/BookType.ts";
+import type {UserType} from "@/types/UserType.ts";
 
-export function addToCart(book: BookType, quantity: number = 1): void {
+const storedUser = sessionStorage.getItem("user");
+const user: UserType | null = storedUser ? JSON.parse(storedUser) : null;
+
+export function updateCart(book: BookType | CartItem, action: 'add' | 'remove', quantity: number = 1): void {
   const cart: CartItem[] = JSON.parse(localStorage.getItem('cart') || '[]');
-  const existingItem = cart.find((item) => item.id === book.id);
+  const userId = user?.id || '';
 
-  if (existingItem) {
-    existingItem.quantity += quantity;
-  } else {
-    cart.push({
-      id: book.id,
-      title: book.title,
-      price: book.price,
-      discount: book.discount,
-      quantity,
-      coverImage: book.coverImage,
-      stock: book.stock,
-    });
+  const existingItem = cart.find((item) => item.id === (book as CartItem).id);
+
+  if (action === 'add') {
+    if (existingItem) {
+      existingItem.quantity += quantity;
+    } else {
+      const newBook = book as BookType;
+      cart.push({
+        userId,
+        id: newBook.id,
+        title: newBook.title,
+        price: newBook.price,
+        discount: newBook.discount,
+        quantity,
+        coverImage: newBook.coverImage,
+        stock: newBook.stock,
+      });
+    }
   }
 
-  localStorage.setItem('cart', JSON.stringify(cart));
-}
-
-export function removeItem(book: CartItem, quantity: number = 1): void {
-  const cart: CartItem[] = JSON.parse(localStorage.getItem('cart') || '[]');
-  const existingItem = cart.find((item) => item.id === book.id);
-
-  if (existingItem) {
+  if (action === 'remove' && existingItem) {
     existingItem.quantity -= quantity;
+    if (existingItem.quantity <= 0) {
+      cart.splice(cart.indexOf(existingItem), 1);
+    }
   }
 
   localStorage.setItem('cart', JSON.stringify(cart));
-}
-
-export function addItem(book: CartItem, quantity: number = 1): void {
-  const cart: CartItem[] = JSON.parse(localStorage.getItem('cart') || '[]');
-  const existingItem = cart.find((item) => item.id === book.id);
-
-  if (existingItem) {
-    existingItem.quantity += quantity;
-  }
-
-  localStorage.setItem('cart', JSON.stringify(cart));
-}
-
-export function removeFromCart(bookId: string): void {
-  const cart: CartItem[] = JSON.parse(localStorage.getItem('cart') || '[]');
-  const updatedCart = cart.filter((item) => item.id !== bookId);
-  localStorage.setItem('cart', JSON.stringify(updatedCart));
 }
 
 export function getCart(): CartItem[] {

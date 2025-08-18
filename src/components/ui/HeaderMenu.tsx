@@ -9,6 +9,7 @@ import {useNavigate} from "react-router";
 import Modal from "@/components/ui/Modal.tsx";
 import ModalUser from "@/components/ui/ModalUser.tsx";
 import type {SearchInputs} from "@/types/SearchInputs.ts";
+import type {UserType} from "@/types/UserType.ts";
 
 export default function HeaderMenu() {
   const {data} = useQuery({
@@ -31,6 +32,12 @@ export default function HeaderMenu() {
   const onSubmit: SubmitHandler<SearchInputs> = (data) => {
     navigate(`/search?page=0&limit=10&category=${data.category}&search=${data.search}`);
   }
+
+  const storedUser = sessionStorage.getItem("user");
+  const user: UserType | null = storedUser ? JSON.parse(storedUser) : null;
+
+  const username = user?.name ?? '';
+  const isLoggedIn = !!user?.email;
 
 
   return (
@@ -71,19 +78,19 @@ export default function HeaderMenu() {
             </button>
           </form>
         </li>
-        <li className="items-center flex flex-col" onClick={() => navigate('/login')}>
-          <Modal text={`Ola, faça login \nWishlist`}>
+        <li className="items-center flex flex-col" onClick={() =>isLoggedIn?navigate('/account') : navigate('/login')}>
+          <Modal text={user ?  `Olá ${username.split(' ')[0]} \nConta e Wishlist` : `Ola, faça login \nWishlist`}>
             <div className="w-[200px]">
-              <ModalUser/>
+              <ModalUser isLoggedIn={isLoggedIn}/>
             </div>
           </Modal>
         </li>
-        <li onClick={() => navigate('/order')} className="cursor-pointer items-center flex flex-col">
+        <li onClick={() => navigate('/order')} className="cursor-pointer items-center flex flex-col pr-2">
           <span>Compras</span>
           <span>Devoluções</span>
         </li>
-        <li onClick={() => navigate('/cart')} className="flex flex-col items-center cursor-pointer">
-          <span>Carrinho </span><ShoppingCartIcon/></li>
+        <li onClick={() => navigate('/cart')} className="flex justify-between items-center cursor-pointer">
+          <span><ShoppingCartIcon/> Carrinho</span></li>
       </ul>
     </div>
   )

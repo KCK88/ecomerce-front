@@ -1,12 +1,12 @@
 import {useNavigate} from "react-router";
 
-export default function ModalUser() {
+export default function ModalUser({ isLoggedIn }: { isLoggedIn: boolean }) {
 
   const navigate = useNavigate();
-
+  console.log(isLoggedIn);
   return (
     <div className="flex flex-col items-center justify-center w-full">
-      <div>
+      {isLoggedIn && <div>
         <button
           onClick={() => navigate('/login')}
           className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-stone-600 hover:bg-stone-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-500"
@@ -19,7 +19,7 @@ export default function ModalUser() {
             comece aqui
           </a>
         </div>
-      </div>
+      </div>}
       <div>
         <ul className="flex justify-center gap-10 overflow-hidden">
           <li>Conta</li>

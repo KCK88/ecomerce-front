@@ -7,8 +7,8 @@ import type {BookType} from "@/types/BookType.ts";
 import {ChevronDown, ChevronUp} from "lucide-react";
 import Stars from "@/components/ui/Stars.tsx";
 import {dateFormater} from "@/utils/dateFormater.ts";
-import {addToCart} from "@/utils/cartHandlers.ts";
 import {useNavigate} from "react-router";
+import {updateCart} from "@/utils/cartHandlers.ts";
 
 
 export default function Product() {
@@ -122,14 +122,14 @@ export default function Product() {
               className="w-full md:w-auto bg-stone-600 hover:bg-stone-700 text-white font-bold py-3 px-8 rounded-lg transition duration-200"
               onClick={()=> {
                 navigate('/cart')
-                addToCart(book)
+                updateCart(book, 'add')
               }}
             >
               Comprar Agora
             </button>
             <button
               className="w-full md:w-auto bg-stone-700 hover:bg-stone-800 text-white font-bold py-3 px-8 rounded-lg transition duration-200"
-              onClick={()=> addToCart(book)}
+              onClick={()=> updateCart(book, 'add')}
             >
               Adicionar ao carrinho
             </button>
