@@ -1,4 +1,34 @@
+import {type SubmitHandler, useForm} from "react-hook-form";
+import type {LoginInputs} from "@/types/LoginInputs.ts";
+import {useMutation} from "@tanstack/react-query";
+import {loginPost} from "@/services/apiUsers.ts";
+import {useNavigate} from "react-router";
+
 export default function Login() {
+  const navigate = useNavigate();
+  const {
+    mutate, isPending: isLogin, isError
+  } = useMutation({
+    mutationFn: loginPost,
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (error) => {
+      console.error('Deus ruim', error);
+    }
+  })
+
+  const {
+    register,
+    handleSubmit,
+  } = useForm<LoginInputs>()
+
+  const onSubmit: SubmitHandler<LoginInputs> = (data) => {
+    mutate(data);
+    console.log(isError)
+    if (!isError) navigate('/');
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -15,13 +45,17 @@ export default function Login() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6">
+          <form
+            className="space-y-6"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email
               </label>
               <div className="mt-1">
                 <input
+                  {...register("email")}
                   id="email"
                   name="email"
                   type="email"
@@ -38,6 +72,7 @@ export default function Login() {
               </label>
               <div className="mt-1">
                 <input
+                  {...register("password")}
                   id="password"
                   name="password"
                   type="password"
@@ -51,12 +86,13 @@ export default function Login() {
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <input
-                  id="remember-me"
-                  name="remember-me"
+                  {...register('rememberMe')}
+                  id="rememberMe"
+                  name="rememberMe"
                   type="checkbox"
                   className="h-4 w-4 text-stone-600 focus:ring-stone-500 border-gray-300 rounded"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-900">
                   Lembrar de mim
                 </label>
               </div>
@@ -70,6 +106,7 @@ export default function Login() {
 
             <div>
               <button
+                disabled={isLogin}
                 type="submit"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-stone-600 hover:bg-stone-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-500"
               >

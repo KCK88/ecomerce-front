@@ -8,11 +8,7 @@ import {type SubmitHandler, useForm} from "react-hook-form";
 import {useNavigate} from "react-router";
 import Modal from "@/components/ui/Modal.tsx";
 import ModalUser from "@/components/ui/ModalUser.tsx";
-
-type Inputs = {
-  category: string
-  search: string
-}
+import type {SearchInputs} from "@/types/SearchInputs.ts";
 
 export default function HeaderMenu() {
   const {data} = useQuery({
@@ -26,14 +22,13 @@ export default function HeaderMenu() {
   const {
     register,
     handleSubmit,
-  } = useForm<Inputs>({
+  } = useForm<SearchInputs>({
     defaultValues: {
       category: ""
     }
   })
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data)
+  const onSubmit: SubmitHandler<SearchInputs> = (data) => {
     navigate(`/search?page=0&limit=10&category=${data.category}&search=${data.search}`);
   }
 
