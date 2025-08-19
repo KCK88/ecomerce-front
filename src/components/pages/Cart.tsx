@@ -1,8 +1,10 @@
-import {addOrder, getCart, updateCart} from "@/utils/cartHandlers.ts";
+import {getCart, updateCart} from "@/utils/cartHandlers.ts";
 import {BookMinus, BookPlus, BookX} from 'lucide-react';
 import {useEffect, useState} from "react";
 import type {CartItem} from "@/types/CartItem.ts";
 import {useNavigate} from "react-router";
+import {useMutation} from "@tanstack/react-query";
+import {orderPost} from "@/services/apiOrders.ts";
 
 
 export default function Cart() {
@@ -10,7 +12,15 @@ export default function Cart() {
   const [books, setBooks] = useState(getCart())
   const navigate = useNavigate();
 
-
+const {mutate} = useMutation({
+  mutationFn: orderPost,
+  onSuccess: (data) => {
+    console.log(data)
+  },
+  onError: (error) => {
+    console.log(error)
+  }
+})
 
   useEffect(() => {
     setTotal(books.reduce((acc, item) => acc + (item.price * item.quantity), 0))
@@ -18,19 +28,20 @@ export default function Cart() {
 
   function handleAddOrder(order: CartItem[]) {
     console.log('handleAddOrder', order);
-    setBooks(order);
-    addOrder(order);
+    mutate(order);
+    localStorage.setItem('cart', '[]');
+    setBooks([]);
   }
 
   function handleAddItem(item: CartItem) {
     updateCart(item, 'add');
     setBooks(getCart());
-  };
+  }
 
   function handleRemoveItem(item: CartItem) {
     updateCart(item,'remove');
     setBooks(getCart());
-  };
+  }
 
   return (
     <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-6">
@@ -50,7 +61,7 @@ export default function Cart() {
         <div>
           <ul className="divide-y divide-stone-200">
             {books.map((item) => (
-              <li key={item.id} className="py-4 flex justify-between items-center">
+              <li key={item.bookId} className="py-4 flex justify-between items-center">
                 <span className="text-stone-800 font-medium">{item.title}</span>
                 <div className="flex items-center space-x-4">
                   <button

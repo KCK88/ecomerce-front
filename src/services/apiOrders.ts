@@ -1,7 +1,7 @@
-import type {PostType} from "@/types/PostType.ts";
+import type {CartItem} from "@/types/CartItem.ts";
 
-export async function orderPost (postData: PostType): Promise<Response> {
-  const response = await fetch('http://localhost:3000/login', {
+export async function orderPost (postData: CartItem[]): Promise<Response> {
+  const response = await fetch('http://localhost:3000/orders', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -11,7 +11,13 @@ export async function orderPost (postData: PostType): Promise<Response> {
     credentials: 'include',
   });
   if (!response.ok) {
-    throw new Error('Failed to create post');
+    throw new Error('Failed to create order');
   }
   return response.json();
+}
+
+export async function getOrdersByUser(userId: string): Promise<any> {
+  const response = await fetch(`http://localhost:3000/orders/${userId}`);
+  const data = await response.json();
+  return data;
 }

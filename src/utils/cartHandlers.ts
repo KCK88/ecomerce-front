@@ -9,16 +9,17 @@ export function updateCart(book: BookType | CartItem, action: 'add' | 'remove', 
   const cart: CartItem[] = JSON.parse(localStorage.getItem('cart') || '[]');
   const userId = user?.id || '';
 
-  const existingItem = cart.find((item) => item.id === (book as CartItem).id);
+  const existingItem = cart.find((item) => item.bookId === (book as CartItem).bookId);
 
   if (action === 'add') {
     if (existingItem) {
       existingItem.quantity += quantity;
+      existingItem.price = existingItem.price * existingItem.quantity;
     } else {
       const newBook = book as BookType;
       cart.push({
         userId,
-        id: newBook.id,
+        bookId: newBook.id,
         title: newBook.title,
         price: newBook.price,
         discount: newBook.discount,
@@ -31,6 +32,7 @@ export function updateCart(book: BookType | CartItem, action: 'add' | 'remove', 
 
   if (action === 'remove' && existingItem) {
     existingItem.quantity -= quantity;
+    existingItem.price = existingItem.price * existingItem.quantity;
     if (existingItem.quantity <= 0) {
       cart.splice(cart.indexOf(existingItem), 1);
     }
@@ -47,6 +49,7 @@ export function getCart(): CartItem[] {
 export function clearCart(): void {
   localStorage.removeItem('cart');
 }
+
 export function addOrder(books: CartItem[]) {
   localStorage.setItem('order', JSON.stringify(books))
 }

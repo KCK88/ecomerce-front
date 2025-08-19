@@ -14,7 +14,7 @@ export default function Login() {
       console.log(data);
     },
     onError: (error) => {
-      console.error('Deus ruim', error);
+      console.error('Deu ruim', error);
     }
   })
 
@@ -25,7 +25,6 @@ export default function Login() {
 
   const onSubmit: SubmitHandler<LoginInputs> = (data) => {
     mutate(data);
-    console.log(isError)
     if (!isError) navigate('/');
   }
 

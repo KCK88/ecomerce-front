@@ -1,10 +1,12 @@
 export interface CartItem {
-  id: string;
+  bookId: string;
   userId: string;
   title: string;
   price: number;
   discount?: number;
   quantity: number;
   coverImage: string;
+  status?: string;
   stock: number;
+  createdAt?: string;
 }

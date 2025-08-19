@@ -27,7 +27,6 @@ export default function Product() {
   })
 
   const book: BookType = useMemo(() => data?.book || [], [data?.book]);
-  console.log(book);
 
   const {data: imageUrl, isPending: isImagesLoading} = useQuery({
     queryKey: ['book-image', bookId],

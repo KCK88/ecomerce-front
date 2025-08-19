@@ -28,7 +28,7 @@ export interface BookType {
   language: string;
   publisher: string;
   publishedDate: string;
-  createdAt: string;
+  createdAt?: string;
   featured: boolean;
   search?: BookType[];
 }
