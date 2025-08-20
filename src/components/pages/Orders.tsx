@@ -2,10 +2,13 @@ import {useQuery} from "@tanstack/react-query";
 import {getOrdersByUser} from "@/services/apiOrders.ts";
 import type {UserType} from "@/types/UserType.ts";
 import type {CartItem} from "@/types/CartItem.ts";
-import {useMemo} from "react";
+import {useMemo, useState} from "react";
 import {dateFormater} from "@/utils/dateFormater.ts";
+import ModalOrder from "@/components/ui/ModalOrder.tsx";
 
 export default function Orders() {
+  const [isOpen, setIsOpen] = useState(false)
+  const closeModal = () => setIsOpen(false);
 
   const storedUser = sessionStorage.getItem("user");
   const user: UserType | null = storedUser ? JSON.parse(storedUser) : null;
@@ -60,7 +63,12 @@ export default function Orders() {
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(order.status!)}`}>
                       {order.status === 'pendente' ? 'Pendente' : order.status === 'concluido' ? 'cancelado' : 'Cancelado'}
                     </span>
-                  {order.status === 'concluido'? <button>Devolver</button>  : ''}
+                  {order.status === 'concluido'? <button onClick={()=>setIsOpen(true)}>Devolver</button>  : ''}
+                  <ModalOrder isOpen={isOpen} onClose={closeModal}>
+                    <h1>Tem certeza que deseja devover o seu pedido?</h1>
+                    <button>Sim</button>
+                    <button>Não</button>
+                  </ModalOrder>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{dateFormater(order.createdAt!)}</td>
               </tr>

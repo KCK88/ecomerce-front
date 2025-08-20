@@ -5,32 +5,37 @@ import type {CartItem} from "@/types/CartItem.ts";
 import {useNavigate} from "react-router";
 import {useMutation} from "@tanstack/react-query";
 import {orderPost} from "@/services/apiOrders.ts";
+import ModalOrder from "@/components/ui/ModalOrder.tsx";
 
 
 export default function Cart() {
   const [total, setTotal] = useState(0);
   const [books, setBooks] = useState(getCart())
+  const [isOpen, setIsOpen] = useState(false)
+  const closeModal = () => setIsOpen(false);
+
   const navigate = useNavigate();
 
-const {mutate} = useMutation({
-  mutationFn: orderPost,
-  onSuccess: (data) => {
-    console.log(data)
-  },
-  onError: (error) => {
-    console.log(error)
-  }
-})
+  const {mutate} = useMutation({
+    mutationFn: orderPost,
+    onSuccess: (data) => {
+      console.log(data)
+
+      localStorage.setItem('cart', '[]');
+      setBooks([]);
+      setIsOpen(true);
+    },
+    onError: (error) => {
+      console.log(error)
+    }
+  })
 
   useEffect(() => {
     setTotal(books.reduce((acc, item) => acc + (item.price * item.quantity), 0))
   }, [books]);
 
   function handleAddOrder(order: CartItem[]) {
-    console.log('handleAddOrder', order);
     mutate(order);
-    localStorage.setItem('cart', '[]');
-    setBooks([]);
   }
 
   function handleAddItem(item: CartItem) {
@@ -91,10 +96,15 @@ const {mutate} = useMutation({
 
           <button
             className="mt-6 w-full bg-stone-600 hover:bg-stone-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
-            onClick={() => handleAddOrder(books)}
+            onClick={() => {
+              handleAddOrder(books)
+            }}
           >
             Finalizar Compra
           </button>
+          <ModalOrder isOpen={isOpen} onClose={closeModal}>
+            <h1>Compra realizada com sucesso</h1>
+          </ModalOrder>
         </div>
       )}
     </div>

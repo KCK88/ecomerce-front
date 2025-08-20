@@ -9,6 +9,7 @@ import Stars from "@/components/ui/Stars.tsx";
 import {dateFormater} from "@/utils/dateFormater.ts";
 import {useNavigate} from "react-router";
 import {updateCart} from "@/utils/cartHandlers.ts";
+import CustButton from "@/components/ui/CustButton.tsx";
 
 
 export default function Product() {
@@ -117,7 +118,7 @@ export default function Product() {
           </div>
 
           <div  className="flex mb-6 gap-4">
-            <button
+            <CustButton
               className="w-full md:w-auto bg-stone-600 hover:bg-stone-700 text-white font-bold py-3 px-8 rounded-lg transition duration-200"
               onClick={()=> {
                 navigate('/cart')
@@ -125,13 +126,13 @@ export default function Product() {
               }}
             >
               Comprar Agora
-            </button>
-            <button
+            </CustButton>
+            <CustButton
               className="w-full md:w-auto bg-stone-700 hover:bg-stone-800 text-white font-bold py-3 px-8 rounded-lg transition duration-200"
               onClick={()=> updateCart(book, 'add')}
             >
               Adicionar ao carrinho
-            </button>
+            </CustButton>
 
           </div>
 
