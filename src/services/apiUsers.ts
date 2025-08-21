@@ -18,7 +18,7 @@ export async function loginPost (postData: PostType): Promise<Response> {
   if (response.ok) {
     sessionStorage.setItem('token', data.token);
 
-    sessionStorage.setItem('user', JSON.stringify(data.user));
+    localStorage.setItem('user', JSON.stringify(data.user));
 
     console.log('Login realizado com sucesso!');
   } else {

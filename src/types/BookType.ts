@@ -1,10 +1,10 @@
 
-interface Author {
+export interface Author {
   id: string;
   name: string;
 }
 
-interface Category {
+export interface Category {
   id: string;
   name: string;
 }

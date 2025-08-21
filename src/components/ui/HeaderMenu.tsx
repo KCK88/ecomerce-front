@@ -33,7 +33,7 @@ export default function HeaderMenu() {
     navigate(`/search?page=0&limit=10&category=${data.category}&search=${data.search}`);
   }
 
-  const storedUser = sessionStorage.getItem("user");
+  const storedUser = localStorage.getItem("user");
   const user: UserType | null = storedUser ? JSON.parse(storedUser) : null;
 
   const username = user?.name ?? '';

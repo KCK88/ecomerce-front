@@ -10,7 +10,7 @@ export default function Orders() {
   const [isOpen, setIsOpen] = useState(false)
   const closeModal = () => setIsOpen(false);
 
-  const storedUser = sessionStorage.getItem("user");
+  const storedUser = localStorage.getItem("user");
   const user: UserType | null = storedUser ? JSON.parse(storedUser) : null;
   const userId = user?.id || '';
 
