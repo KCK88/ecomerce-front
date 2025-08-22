@@ -15,7 +15,7 @@ export default function Orders() {
   const userId = user?.id || '';
 
   const {data} = useQuery({
-    queryKey: ['orders'],
+    queryKey: ['orders', userId],
     queryFn: async () => {
       return await getOrdersByUser(userId)
     }

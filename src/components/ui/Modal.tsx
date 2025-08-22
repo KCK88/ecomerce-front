@@ -20,7 +20,7 @@ export default function Modal({children, text}: Props) {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="cursor-pointer font-normal text-base bg-stone-200 whitespace-pre">{text}</NavigationMenuTrigger>
+          <NavigationMenuTrigger className="cursor-pointer font-normal text-[13] bg-stone-[10] whitespace-pre">{text}</NavigationMenuTrigger>
           <NavigationMenuContent>
             <NavigationMenuLink>{children}</NavigationMenuLink>
           </NavigationMenuContent>

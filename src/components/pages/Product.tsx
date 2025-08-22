@@ -10,10 +10,13 @@ import {dateFormater} from "@/utils/dateFormater.ts";
 import {useNavigate} from "react-router";
 import {updateCart} from "@/utils/cartHandlers.ts";
 import CustButton from "@/components/ui/CustButton.tsx";
+import type {UserType} from "@/types/UserType.ts";
+import BookEdit from "@/components/ui/BookEdit.tsx";
 
 
 export default function Product() {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
   const {bookId} = useParams();
   const navigate = useNavigate();
 
@@ -26,6 +29,11 @@ export default function Product() {
       return await getBook(bookId)
     }
   })
+
+  const storedUser = localStorage.getItem("user");
+  const user: UserType | null = storedUser ? JSON.parse(storedUser) : null;
+
+  const isAdmin = user?.role === "Admin";
 
   const book: BookType = useMemo(() => data?.book || [], [data?.book]);
 
@@ -48,6 +56,7 @@ export default function Product() {
   }
 
   return (
+    <>
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
       <div className="flex flex-col md:flex-row gap-8">
         <div className="flex-shrink-0">
@@ -117,10 +126,10 @@ export default function Product() {
             )}
           </div>
 
-          <div  className="flex mb-6 gap-4">
+          <div className="flex mb-6 gap-4">
             <CustButton
               className="w-full md:w-auto bg-stone-600 hover:bg-stone-700 text-white font-bold py-3 px-8 rounded-lg transition duration-200"
-              onClick={()=> {
+              onClick={() => {
                 navigate('/cart')
                 updateCart(book, 'add')
               }}
@@ -129,15 +138,19 @@ export default function Product() {
             </CustButton>
             <CustButton
               className="w-full md:w-auto bg-stone-700 hover:bg-stone-800 text-white font-bold py-3 px-8 rounded-lg transition duration-200"
-              onClick={()=> updateCart(book, 'add')}
+              onClick={() => updateCart(book, 'add')}
             >
               Adicionar ao carrinho
             </CustButton>
+
+            {isAdmin && <CustButton onClick={() => setIsOpen(true)}>Editar livro </CustButton>}
 
           </div>
 
         </div>
       </div>
     </div>
+      {!isOpen && <BookEdit/>}
+  </>
   );
 }
