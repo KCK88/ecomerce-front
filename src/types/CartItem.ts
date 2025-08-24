@@ -10,3 +10,7 @@ export interface CartItem {
   stock: number;
   createdAt?: string;
 }
+
+export interface CartBooks {
+  books: CartItem[];
+}

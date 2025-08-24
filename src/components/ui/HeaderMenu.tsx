@@ -10,7 +10,6 @@ import Modal from "@/components/ui/Modal.tsx";
 import ModalUser from "@/components/ui/ModalUser.tsx";
 import type {SearchInputs} from "@/types/SearchInputs.ts";
 import type {UserType} from "@/types/UserType.ts";
-import {getOrdersByUser} from "@/services/apiOrders.ts";
 import type {CartItem} from "@/types/CartItem.ts";
 
 export default function HeaderMenu() {
@@ -35,19 +34,14 @@ export default function HeaderMenu() {
   }
 
   const storedUser = localStorage.getItem("user");
+  const storedCart = localStorage.getItem("cart");
   const user: UserType | null = storedUser ? JSON.parse(storedUser) : null;
+  const cart: CartItem[] | null = storedCart ? JSON.parse(storedCart) : null;
 
   const username = user?.name ?? '';
   const isLoggedIn = !!user?.email;
-  const userId = user?.id? user.id : '';
+  const cartQuantity = cart?.length ?? 0;
 
-  const {data: userOrder} = useQuery({
-    queryKey: ['orders', userId],
-    queryFn: async () => {
-      return await getOrdersByUser(userId)
-    }
-  })
-  const orders: CartItem[] = useMemo(() => userOrder?.order || [], [userOrder?.order])
 
   return (
     <header className="bg-white shadow-sm py-1 px-2">
@@ -126,7 +120,7 @@ export default function HeaderMenu() {
           <span
             className="absolute -top-1 -right-1 bg-stone-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
           >
-            {orders.length}
+            {cartQuantity}
           </span>
         </li>
       </ul>

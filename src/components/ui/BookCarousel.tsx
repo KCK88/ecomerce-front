@@ -13,7 +13,7 @@ import type {BookType} from "@/types/BookType.ts";
 import {Skeleton} from "@/components/ui/skeleton"
 import Stars from "@/components/ui/Stars.tsx";
 import {useNavigate} from "react-router";
-
+import {Card} from "@/components/ui/card.tsx";
 
 export default function BookCarousel() {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ export default function BookCarousel() {
   });
   const books: BookType[] = useMemo(() => data?.data || [], [data?.data]);
 
-  const { data: imageUrls, isPending: isImagesLoading } = useQuery({
+  const {data: imageUrls, isPending: isImagesLoading} = useQuery({
     queryKey: ['book-images', books.map(book => book._id)],
     queryFn: async () => {
       const urls: Record<string, string> = {};
@@ -50,38 +50,62 @@ export default function BookCarousel() {
         }}
         plugins={[
           Autoplay({
-            delay: 5000,
+            delay: 3000,
+            stopOnMouseEnter: true,
+            stopOnInteraction: false,
           }),
         ]}
       >
         <CarouselContent className="-ml-4">
           {books.map((book, index) => (
-            <CarouselItem key={index} className="pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
-              <div>
-                <div>
-                  {isImagesLoading ? (<div>
-                    <Skeleton className="h-[100px] w-[100px] rounded-full"/>
-                    <div className="space-y-2">
-                      <Skeleton className="h-5 w-[250px]"/>
-                      <Skeleton className="h-5 w-[250px]"/>
-                    </div>
-                  </div>) : <img
-                    src={imageUrls?.[book._id] || `${book.coverImage}`}
-                    alt={book.title}
-                    onClick={()=> navigate(`/product/${book._id}`)}
-                    className='max-w-[250px] max-h-[300px] cursor-pointer'
-                  />}
-                  <span className="text-xl">{book.title}</span>
-                  <div className="flex ">
-                    <span className="text-xl">{book.averageRating}</span>
-                    <span className="text-xl"><Stars averageRating={book.averageRating}/></span>
-                    <span className="text-base"> {book.reviewsCount}</span>
-                  </div>
-                  <span>R$ {(book.price.toFixed(2))}</span>
+            <Card className="mx-2 hover:shadow-lg transition-shadow">
+              <CarouselItem key={index} className="pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
+                <div >
+                  <div className="p-4">
+                    {isImagesLoading ? (<div className="flex flex-col items-center space-y-4">
+                      <div className="flex flex-col items-center space-y-4">
+                        <Skeleton className="h-48 w-32 rounded-lg mx-auto" />
+                        <div className="space-y-2 w-full">
+                          <Skeleton className="h-5 w-full" />
+                          <Skeleton className="h-4 w-3/4" />
+                          <Skeleton className="h-6 w-1/2" />
+                        </div>
+                      </div>
+                    </div>) : <img
+                      src={imageUrls?.[book._id] || `${book.coverImage}`}
+                      alt={book.title}
+                      onClick={() => navigate(`/product/${book._id}`)}
+                      className='max-w-[250px] max-h-[300px] cursor-pointer hover:scale-105 transition-transform'
+                    />}
+                    <div className="mt-4 space-y-2">
+                      <h3
+                        className="truncate font-semibold text-gray-900 line-clamp-2 group-hover:text-stone-600 transition-colors cursor-pointer"
+                        onClick={() => navigate(`/product/${book._id}`)}
+                      >
+                        {book.title.length > 30 ? book.title.slice(0, 30 - 3) + "..." : book.title}
+                      </h3>
 
+                      <div className="flex items-center gap-2">
+                            <span className="text-lg font-bold text-stone-600">
+                              {book.averageRating}
+                            </span>
+                        <Stars averageRating={book.averageRating} />
+                        <span className="text-sm text-gray-600">
+                              ({book.reviewsCount})
+                            </span>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                            <span className="text-xl font-bold text-stone-900">
+                              R$ {book.price.toFixed(2)}
+                            </span>
+                      </div>
+                    </div>
+
+                  </div>
                 </div>
-              </div>
-            </CarouselItem>
+              </CarouselItem>
+            </Card>
           ))}
         </CarouselContent>
         <CarouselPrevious/>

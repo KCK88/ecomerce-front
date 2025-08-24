@@ -49,7 +49,7 @@ export default function Cart() {
   }
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-6">
+    <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-6 my-5">
       <h2 className="text-2xl font-bold text-stone-800 mb-4">Carrinho de Compras</h2>
 
       {books.length === 0 ? (
