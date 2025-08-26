@@ -1,16 +1,21 @@
-export interface CartItem {
-  bookId: string;
-  userId: string;
+export interface Book {
+  _id: string;
   title: string;
   price: number;
-  discount?: number;
   quantity: number;
+  status: 'pendente' | 'concluido' | 'cancelado' | string;
   coverImage: string;
-  status?: string;
+  discount: number;
   stock: number;
-  createdAt?: string;
+  bookId: string;
+  userId: string;
 }
 
-export interface CartBooks {
-  books: CartItem[];
+export interface Order {
+  _id: string;
+  books: Book[];
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }

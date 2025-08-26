@@ -58,8 +58,8 @@ export default function BookCarousel() {
       >
         <CarouselContent className="-ml-4">
           {books.map((book, index) => (
-            <Card className="mx-2 hover:shadow-lg transition-shadow">
-              <CarouselItem key={index} className="pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
+            <Card className="mx-2 hover:shadow-lg transition-shadow" key={index}>
+              <CarouselItem className="pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
                 <div >
                   <div className="p-4">
                     {isImagesLoading ? (<div className="flex flex-col items-center space-y-4">

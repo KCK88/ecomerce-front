@@ -10,7 +10,7 @@ import Modal from "@/components/ui/Modal.tsx";
 import ModalUser from "@/components/ui/ModalUser.tsx";
 import type {SearchInputs} from "@/types/SearchInputs.ts";
 import type {UserType} from "@/types/UserType.ts";
-import type {CartItem} from "@/types/CartItem.ts";
+import type {Order} from "@/types/CartItem.ts";
 
 export default function HeaderMenu() {
   const {data} = useQuery({
@@ -36,11 +36,11 @@ export default function HeaderMenu() {
   const storedUser = localStorage.getItem("user");
   const storedCart = localStorage.getItem("cart");
   const user: UserType | null = storedUser ? JSON.parse(storedUser) : null;
-  const cart: CartItem[] | null = storedCart ? JSON.parse(storedCart) : null;
+  const cart: Order | null = storedCart ? JSON.parse(storedCart) : null;
 
   const username = user?.name ?? '';
   const isLoggedIn = !!user?.email;
-  const cartQuantity = cart?.length ?? 0;
+  const cartQuantity = cart?.books?.length ?? 0;
 
 
   return (

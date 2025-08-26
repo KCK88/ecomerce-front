@@ -4,7 +4,7 @@ import Footer from "@/components/ui/Footer.tsx";
 
 
 export default function AppLayout() {
-  return <div>
+  return <div className="flex flex-col min-h-screen">
     <Header/>
     <main>
       <div>
