@@ -9,8 +9,8 @@ import {useNavigate} from "react-router";
 import Modal from "@/components/ui/Modal.tsx";
 import ModalUser from "@/components/ui/ModalUser.tsx";
 import type {SearchInputs} from "@/types/SearchInputs.ts";
-import type {UserType} from "@/types/UserType.ts";
 import type {Order} from "@/types/CartItem.ts";
+import {useAuth} from "@/context/AuthContext.tsx";
 
 export default function HeaderMenu() {
   const {data} = useQuery({
@@ -33,13 +33,14 @@ export default function HeaderMenu() {
     navigate(`/search?page=0&limit=10&category=${data.category}&search=${data.search}`);
   }
 
-  const storedUser = localStorage.getItem("user");
   const storedCart = localStorage.getItem("cart");
-  const user: UserType | null = storedUser ? JSON.parse(storedUser) : null;
   const cart: Order | null = storedCart ? JSON.parse(storedCart) : null;
 
-  const username = user?.name ?? '';
-  const isLoggedIn = !!user?.email;
+
+  const { user } = useAuth();
+  const username = user?.name?.split(" ")[0] ?? "";
+  const isLoggedIn = !!user;
+
   const cartQuantity = cart?.books?.length ?? 0;
 
 
@@ -93,7 +94,7 @@ export default function HeaderMenu() {
         </li>
 
         <li className="flex flex-col items-center cursor-pointer text-sm hover:text-stone-600 transition-colors px-2"
-            onClick={() => isLoggedIn ? navigate('/account') : navigate('/login')}
+            // onClick={() => isLoggedIn ? navigate('/account') : navigate('/login')}
         >
           <div className="flex items-center">
             <Modal text={user ? `Olá ${username.split(' ')[0]} \nConta e Wishlist` : `Ola, faça login \nWishlist`}>

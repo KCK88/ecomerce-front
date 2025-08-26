@@ -3,8 +3,11 @@ import type {LoginInputs} from "@/types/LoginInputs.ts";
 import {useMutation} from "@tanstack/react-query";
 import {loginPost} from "@/services/apiUsers.ts";
 import {useNavigate} from "react-router";
+import {useAuth} from "@/context/AuthContext.tsx";
 
 export default function Login() {
+  const { login } = useAuth();
+
   const navigate = useNavigate();
   const {
     mutate, isPending: isLogin, isError
@@ -12,6 +15,7 @@ export default function Login() {
     mutationFn: loginPost,
     onSuccess: (data) => {
       console.log(data);
+      login(data.user);
     },
     onError: (error) => {
       console.error('Deu ruim', error);

@@ -9,6 +9,7 @@ import Orders from "@/components/pages/Orders.tsx";
 import SearchResult from "@/components/pages/SearchResult.tsx";
 import Product from "@/components/pages/Product.tsx";
 import Account from "@/components/pages/Account.tsx";
+import {AuthProvider} from "@/context/AuthContext.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,7 +24,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
-            <Route element={<AppLayout/>}>
+            <Route element={<AuthProvider><AppLayout/></AuthProvider>}>
               <Route index element={<Navigate replace to="home"/>}/>
               <Route path='home' element={<Home/>}/>
               <Route path='cart' element={<Cart/>}/>
@@ -35,7 +36,7 @@ function App() {
             </Route>
           </Routes>
         </BrowserRouter>
-        <ReactQueryDevtools initialIsOpen={false} />
+        <ReactQueryDevtools initialIsOpen={false}/>
       </QueryClientProvider>
     </>
   )
