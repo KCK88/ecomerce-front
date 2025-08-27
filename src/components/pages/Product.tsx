@@ -10,13 +10,9 @@ import {dateFormater} from "@/utils/dateFormater.ts";
 import {useNavigate} from "react-router";
 import {updateCart} from "@/utils/cartHandlers.ts";
 import CustButton from "@/components/ui/CustButton.tsx";
-import type {UserType} from "@/types/UserType.ts";
-import BookEdit from "@/components/ui/BookEdit.tsx";
-
 
 export default function Product() {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isOpen, setIsOpen] = useState(false)
   const {bookId} = useParams();
   const navigate = useNavigate();
 
@@ -29,11 +25,6 @@ export default function Product() {
       return await getBook(bookId)
     }
   })
-
-  const storedUser = localStorage.getItem("user");
-  const user: UserType | null = storedUser ? JSON.parse(storedUser) : null;
-
-  const isAdmin = user?.role === "Admin";
 
   const book: BookType = useMemo(() => data?.book || [], [data?.book]);
 
@@ -143,19 +134,11 @@ export default function Product() {
                 Adicionar ao carrinho
               </CustButton>
 
-              {isAdmin && <CustButton
-                  onClick={() => setIsOpen(!isOpen)}
-                  className="w-full md:w-auto bg-red-700 hover:bg-red-800 text-white font-bold py-3 px-8 rounded-lg transition duration-200"
-              >
-                  Editar livro
-              </CustButton>}
-
             </div>
 
           </div>
         </div>
       </div>
-      {isOpen && <BookEdit/>}
     </>
   );
 }

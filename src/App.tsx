@@ -10,6 +10,7 @@ import SearchResult from "@/components/pages/SearchResult.tsx";
 import Product from "@/components/pages/Product.tsx";
 import Account from "@/components/pages/Account.tsx";
 import {AuthProvider} from "@/context/AuthContext.tsx";
+import {BackOffice} from "@/components/pages/BackOffice.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,6 +34,7 @@ function App() {
               <Route path='search' element={<SearchResult/>}/>
               <Route path='product/:bookId' element={<Product/>}/>
               <Route path='account' element={<Account/>}/>
+              <Route path='backOffice' element={<BackOffice/>}/>
             </Route>
           </Routes>
         </BrowserRouter>

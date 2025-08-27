@@ -3,7 +3,7 @@ import {useQuery} from "@tanstack/react-query";
 import {MapPin, Search, ShoppingCartIcon} from "lucide-react";
 import {getCategories} from "@/services/apiCategories.ts";
 import type {CategoryType} from "@/types/CategoryType.ts";
-import {useMemo} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {type SubmitHandler, useForm} from "react-hook-form";
 import {useNavigate} from "react-router";
 import Modal from "@/components/ui/Modal.tsx";
@@ -13,6 +13,8 @@ import type {Order} from "@/types/CartItem.ts";
 import {useAuth} from "@/context/AuthContext.tsx";
 
 export default function HeaderMenu() {
+  const [cartAmount, setCartAmount] = useState(0)
+  
   const {data} = useQuery({
     queryKey: ['categories'],
     queryFn: getCategories
@@ -29,6 +31,7 @@ export default function HeaderMenu() {
     }
   })
 
+
   const onSubmit: SubmitHandler<SearchInputs> = (data) => {
     navigate(`/search?page=0&limit=10&category=${data.category}&search=${data.search}`);
   }
@@ -37,12 +40,16 @@ export default function HeaderMenu() {
   const cart: Order | null = storedCart ? JSON.parse(storedCart) : null;
 
 
-  const { user } = useAuth();
+  const {user} = useAuth();
   const username = user?.name?.split(" ")[0] ?? "";
   const isLoggedIn = !!user;
+  const isAdmin = user?.role === "Admin";
 
   const cartQuantity = cart?.books?.length ?? 0;
 
+  useEffect(() => {
+    setCartAmount(cartQuantity)
+  }, [cartQuantity]);
 
   return (
     <header className="bg-white shadow-sm py-1 px-2">
@@ -94,12 +101,11 @@ export default function HeaderMenu() {
         </li>
 
         <li className="flex flex-col items-center cursor-pointer text-sm hover:text-stone-600 transition-colors px-2"
-            // onClick={() => isLoggedIn ? navigate('/account') : navigate('/login')}
         >
           <div className="flex items-center">
             <Modal text={user ? `Olá ${username.split(' ')[0]} \nConta e Wishlist` : `Ola, faça login \nWishlist`}>
               <div className="w-[200px]">
-                <ModalUser isLoggedIn={isLoggedIn}/>
+                <ModalUser isLoggedIn={isLoggedIn} isAdmin={isAdmin}/>
               </div>
             </Modal>
           </div>
@@ -121,7 +127,7 @@ export default function HeaderMenu() {
           <span
             className="absolute -top-1 -right-1 bg-stone-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
           >
-            {cartQuantity}
+            {cartAmount}
           </span>
         </li>
       </ul>

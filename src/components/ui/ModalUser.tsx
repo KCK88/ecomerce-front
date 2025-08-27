@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import {useAuth} from "@/context/AuthContext.tsx";
 
-export default function ModalUser({ isLoggedIn }: { isLoggedIn: boolean }) {
+export default function ModalUser({ isLoggedIn, isAdmin }: { isLoggedIn: boolean, isAdmin: boolean } ) {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
@@ -29,10 +29,15 @@ export default function ModalUser({ isLoggedIn }: { isLoggedIn: boolean }) {
       )}
 
       <nav>
-        <ul className="flex justify-center gap-10 text-stone-700 text-xs font-medium px-2">
-          <li onClick={()=> navigate('/account')} className="cursor-pointer hover:text-stone-500 transition">Conta</li>
-          <li className="cursor-pointer hover:text-stone-500 transition">Wishlist</li>
-          {isLoggedIn && <li onClick={() => logout()} className="cursor-pointer hover:text-stone-500 transition">Logout</li>}
+        <ul className="text-stone-700 text-[13px] font-medium px-2">
+          <div className="flex items-center space-x-3">
+            <li onClick={()=> navigate('/account')} className="cursor-pointer hover:text-stone-500 transition">Conta</li>
+            <li className="cursor-pointer hover:text-stone-500 transition">Wishlist</li>
+            <div className="flex flex-col items-center gap-4">
+              {isLoggedIn && <li onClick={() => logout()} className="cursor-pointer hover:text-stone-500 transition">Logout</li>}
+              {isAdmin && <li onClick={()=> navigate('/backoffice?page=0&limit=10')} className="cursor-pointer hover:text-stone-500 transition">Backoffice</li>}
+            </div>
+          </div>
         </ul>
       </nav>
     </div>
