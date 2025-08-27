@@ -5,9 +5,12 @@ import Home from "@/components/pages/Home.tsx";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {ReactQueryDevtools} from "@tanstack/react-query-devtools";
 import Login from "@/components/pages/Login.tsx";
-import OrdersPage from "@/components/pages/Orders.tsx";
+import Orders from "@/components/pages/Orders.tsx";
 import SearchResult from "@/components/pages/SearchResult.tsx";
 import Product from "@/components/pages/Product.tsx";
+import Account from "@/components/pages/Account.tsx";
+import {AuthProvider} from "@/context/AuthContext.tsx";
+import {BackOffice} from "@/components/pages/BackOffice.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,18 +25,20 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
-            <Route element={<AppLayout/>}>
+            <Route element={<AuthProvider><AppLayout/></AuthProvider>}>
               <Route index element={<Navigate replace to="home"/>}/>
               <Route path='home' element={<Home/>}/>
               <Route path='cart' element={<Cart/>}/>
               <Route path='login' element={<Login/>}/>
-              <Route path='order' element={<OrdersPage/>}/>
+              <Route path='order' element={<Orders/>}/>
               <Route path='search' element={<SearchResult/>}/>
               <Route path='product/:bookId' element={<Product/>}/>
+              <Route path='account' element={<Account/>}/>
+              <Route path='backOffice' element={<BackOffice/>}/>
             </Route>
           </Routes>
         </BrowserRouter>
-        <ReactQueryDevtools initialIsOpen={false} />
+        <ReactQueryDevtools initialIsOpen={false}/>
       </QueryClientProvider>
     </>
   )

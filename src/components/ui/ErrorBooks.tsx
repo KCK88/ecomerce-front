@@ -7,10 +7,10 @@ export default function ErrorBooks() {
       <div className="bg-red-50 border border-red-200 text-stone-500 px-4 py-3 rounded-lg max-w-md">
         <div className="flex items-center gap-2">
           <AlertCircle className="h-5 w-5"/>
-          <h3 className="font-medium">Não encontramos nenhum livro</h3>
+          <h3 className="font-medium">Não encontramos nenhum pedido</h3>
         </div>
         <p className="mt-2 text-sm">
-          Por favor, insira uma pou mais palavras ou busque por categoria
+          Nenhum pedido encontrado… sua próxima história ainda está para ser escolhida
         </p>
       </div>
     </div>

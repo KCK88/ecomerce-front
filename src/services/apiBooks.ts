@@ -16,14 +16,19 @@ export async function getSearchBook(page: number, limit: number, params: string 
   return data
 }
 
-export async function getCategoryBook(page: number, limit: number, params: string): Promise<any> {
-  const response = await fetch(`http://localhost:3000/books/${page}/${limit}/category?key=${params}`);
-  const data = await response.json()
-  return data
-}
+// export async function getCategoryBook(page: number, limit: number, params: string): Promise<any> {
+//   const response = await fetch(`http://localhost:3000/books/${page}/${limit}/category?key=${params}`);
+//   const data = await response.json()
+//   return data
+// }
 
 export async function getBook(id: string): Promise<any> {
   const response = await fetch(`http://localhost:3000/books/${id}`);
+  const data = await response.json()
+  return data
+}
+export async function getPagedBook(page: number, limit: number): Promise<any> {
+  const response = await fetch(`http://localhost:3000/books/${page}/${limit}/booksBko`);
   const data = await response.json()
   return data
 }

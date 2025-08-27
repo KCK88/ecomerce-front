@@ -1,9 +1,10 @@
-interface Author {
+
+export interface Author {
   id: string;
   name: string;
 }
 
-interface Category {
+export interface Category {
   id: string;
   name: string;
 }
@@ -27,7 +28,7 @@ export interface BookType {
   language: string;
   publisher: string;
   publishedDate: string;
-  createdAt: string;
+  createdAt?: string;
   featured: boolean;
   search?: BookType[];
 }

@@ -1,73 +1,85 @@
-import {addItem, addOrder, getCart, removeFromCart, removeItem} from "@/utils/cartHandlers.ts";
-import {BookMinus, BookPlus, BookX} from 'lucide-react';
-import {useEffect, useState} from "react";
-import type {CartItem} from "@/types/CartItem.ts";
-import {useNavigate} from "react-router";
+import { getCart, updateCart } from "@/utils/cartHandlers.ts";
+import { BookMinus, BookPlus, BookX } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import { useMutation } from "@tanstack/react-query";
+import { orderPost } from "@/services/apiOrders.ts";
+import ModalOrder from "@/components/ui/ModalOrder.tsx";
+import type {Book} from "@/types/CartItem.ts";
+
 
 
 export default function Cart() {
   const [total, setTotal] = useState(0);
-  const [books, setBooks] = useState(getCart())
+  const [books, setBooks] = useState<Book[]>(getCart().books);
+  const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
+  const closeModal = () => setIsOpen(false);
+
+  const { mutate } = useMutation({
+    mutationFn: orderPost,
+    onSuccess: () => {
+      localStorage.setItem('cart', JSON.stringify({ books: [] }));
+      setBooks([]);
+      setIsOpen(true);
+    },
+    onError: (error) => {
+      console.error("Erro ao finalizar pedido", error);
+    }
+  });
+
   useEffect(() => {
-    setTotal(books.reduce((acc, item) => acc + (item.price * item.quantity), 0))
+    const totalPrice = books.reduce((acc, book) => acc + (book.price * book.quantity), 0);
+    setTotal(totalPrice);
   }, [books]);
 
-  function handleAddOrder(order: CartItem[]) {
-    addOrder(order);
+  function handleAddOrder(order: Book[]) {
+
+    mutate(order);
   }
 
-  function handleAddItem(item: CartItem) {
-    addItem(item);
-    setBooks(getCart());
-  };
+  function handleAddItem(book: Book) {
+    updateCart(book, 'add');
+    setBooks(getCart().books);
+  }
 
-  function handleRemoveItem(item: CartItem) {
-    removeItem(item);
-    setBooks(getCart());
-  };
-
-  function handleRemoveFromCart(id: string) {
-    removeFromCart(id);
-    setBooks(getCart());
-  };
+  function handleRemoveItem(book: Book) {
+    updateCart(book, 'remove');
+    setBooks(getCart().books);
+  }
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-6">
+    <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-6 my-5">
       <h2 className="text-2xl font-bold text-stone-800 mb-4">Carrinho de Compras</h2>
 
       {books.length === 0 ? (
         <div>
           <p className="text-stone-600">Seu carrinho está vazio</p>
           <button
-            onClick={()=>navigate('/')}
+            onClick={() => navigate('/')}
             className="mt-6 w-full bg-stone-600 hover:bg-stone-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
           >
-            Pagina inicial
+            Página inicial
           </button>
         </div>
       ) : (
         <div>
           <ul className="divide-y divide-stone-200">
-            {books.map((item) => (
-              <li key={item.id} className="py-4 flex justify-between items-center">
-                <span className="text-stone-800 font-medium">{item.title}</span>
+            {books.map((book) => (
+              <li key={book._id} className="py-4 flex justify-between items-center">
+                <span className="text-stone-800 font-medium">{book.title}</span>
                 <div className="flex items-center space-x-4">
-                  <button
-                    onClick={() =>
-                      item.quantity === 1 ? handleRemoveFromCart(item.id) : handleRemoveItem(item)
-                    }
-                  >
-                    {item.quantity === 1 ? <BookX/> : <BookMinus/>}
+                  <button onClick={() => handleRemoveItem(book)}>
+                    {book.quantity === 1 ? <BookX /> : <BookMinus />}
                   </button>
-                  <span className="text-stone-600">{item.quantity}x</span>
-                  <button
-                    onClick={() => handleAddItem(item)}
-                  >
-                    <BookPlus/>
+                  <span className="text-stone-600">{book.quantity}x</span>
+                  <button onClick={() => handleAddItem(book)}>
+                    <BookPlus />
                   </button>
-                  <span className="text-stone-800 font-medium">R$ {(item.quantity * item.price).toFixed(2)}</span>
+                  <span className="text-stone-800 font-medium">
+                    R$ {(book.quantity * book.price).toFixed(2)}
+                  </span>
                 </div>
               </li>
             ))}
@@ -86,8 +98,12 @@ export default function Cart() {
           >
             Finalizar Compra
           </button>
+
+          <ModalOrder isOpen={isOpen} onClose={closeModal}>
+            <h1>Compra realizada com sucesso</h1>
+          </ModalOrder>
         </div>
       )}
     </div>
   );
-};
+}
