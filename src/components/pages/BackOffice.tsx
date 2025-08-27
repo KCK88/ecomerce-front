@@ -2,11 +2,13 @@ import {useQuery} from "@tanstack/react-query";
 import {useSearchParams} from "react-router-dom";
 import {getPagedBook} from "@/services/apiBooks.ts";
 import type {BookType} from "@/types/BookType.ts";
-import {useMemo} from "react";
+import {useMemo, useState} from "react";
+import AddBook from "@/components/ui/AddBook.tsx";
 
 
 export function BackOffice() {
   const [searchParams] = useSearchParams();
+  const [isOpenBooks, setIsOpenBooks] = useState(false)
 
   const page = Number(searchParams.get('page'))
   const limit = Number(searchParams.get('limit'))
@@ -24,10 +26,12 @@ export function BackOffice() {
       <h1 className="text-2xl font-bold mb-4">BackOffice - Gerenciamento de Livros</h1>
 
       <div className="flex justify-end mb-4">
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button onClick={()=> setIsOpenBooks(!isOpenBooks)} className="bg-stone-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           Adicionar Novo Livro
         </button>
       </div>
+
+      {isOpenBooks && <AddBook/>}
 
       <div className="bg-white shadow-md rounded my-6">
         <table className="min-w-full table-auto">
@@ -59,14 +63,14 @@ export function BackOffice() {
         </table>
       </div>
 
-      {/* Modal de Edição/Adição (Placeholder) */}
+
       <div className="hidden">
         <div className="fixed inset-0 bg-black opacity-50"></div>
         <div className="fixed inset-0 flex items-center justify-center">
           <div className="bg-white p-8 rounded-lg shadow-lg w-1/2">
             <h2 className="text-2xl mb-4">Adicionar/Editar Livro</h2>
             <form>
-              {/* Campos do formulário aqui */}
+
               <div className="flex justify-end mt-4">
                 <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-2">Cancelar</button>
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Salvar</button>
