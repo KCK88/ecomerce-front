@@ -1,7 +1,7 @@
 import {type SubmitHandler, useForm} from "react-hook-form";
 import type {BookType} from "@/types/BookType.ts";
 
-export default function BookEdit() {
+export default function EditBook() {
   const {register, handleSubmit, formState: { errors }} = useForm<BookType>();
 
   const onSubmit: SubmitHandler<BookType> = (data) => {

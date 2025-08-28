@@ -43,7 +43,7 @@ export default function HeaderMenu() {
   const {user} = useAuth();
   const username = user?.name?.split(" ")[0] ?? "";
   const isLoggedIn = !!user;
-  const isAdmin = user?.role === "Admin";
+  const isAdmin = user?.role === "admin";
 
   const cartQuantity = cart?.books?.length ?? 0;
 

@@ -1,17 +1,49 @@
 import {type SubmitHandler, useForm} from "react-hook-form";
 import type {BookType} from "@/types/BookType.ts";
+import {useMutation, useQuery} from "@tanstack/react-query";
+import {createBook} from "@/services/apiBooks.ts";
+import {getCategories} from "@/services/apiCategories.ts";
+import type {CategoryType} from "@/types/CategoryType.ts";
+import {useMemo} from "react";
+import type {AuthorType} from "@/types/AutorType.ts";
+import {getAuthors} from "@/services/apiAuthors.ts";
 
 export default function AddBook() {
-  const {register, handleSubmit, formState: { errors }} = useForm<BookType>();
+  const {register, handleSubmit, formState: {errors}} = useForm<BookType>();
+
+  const {mutate} = useMutation({
+    mutationFn: createBook,
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (error) => {
+      console.log(error);
+    }
+  })
+
+  const {data: category} = useQuery({
+    queryKey: ['categories'],
+    queryFn: getCategories
+  })
+
+  const {data: author} = useQuery({
+    queryKey: ['authors'],
+    queryFn: getAuthors
+  })
+
+  const categories: CategoryType[] = useMemo(() => category?.data || [], [category?.data])
+  const authors: AuthorType[] = useMemo(() => author?.authors || [], [author?.authors])
 
   const onSubmit: SubmitHandler<BookType> = (data) => {
     console.log(data);
+    mutate(data);
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4">Adicionar Livro</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="bg-white shadow-md rounded-lg p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <h1 className="text-3xl font-bold mb-4">Adicionar livro</h1>
+      <form onSubmit={handleSubmit(onSubmit)}
+            className="bg-white shadow-md rounded-lg p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="md:col-span-2">
           <label htmlFor="title" className="block text-sm font-medium text-gray-700">Titulo</label>
           <input
@@ -23,17 +55,33 @@ export default function AddBook() {
           />
         </div>
 
-        <div className="md:col-span-2">
-          <label htmlFor="author" className="block text-sm font-medium text-gray-700">Autor(es)</label>
-          <input
-            {...register("authors")}
-            id="author"
-            name="author"
-            type="text"
+        <div className="md:col-span-1">
+          <label htmlFor="authors" className="block text-sm font-medium text-gray-700">Autor(es)</label>
+          <select
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
-          />
+            {...register("authors")}
+            multiple={true}
+          >
+            {/*<option value="">Todas os autores</option>*/}
+            {authors.map((author: AuthorType) => (
+              <option key={author._id} value={author.name}>{author.name}</option>
+            ))}
+          </select>
         </div>
-        
+
+        <div className="md:col-span-1">
+          <label htmlFor="categories" className="block text-sm font-medium text-gray-700">Categoria</label>
+          <select
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
+            {...register("categories")}
+          >
+            <option value="">Todas as categorias</option>
+            {categories.map((category: CategoryType) => (
+              <option key={category.id} value={category.genre}>{category.genre}</option>
+            ))}
+          </select>
+        </div>
+
         <div>
           <label htmlFor="publisher" className="block text-sm font-medium text-gray-700">Editora</label>
           <input
@@ -63,6 +111,17 @@ export default function AddBook() {
             id="language"
             name="language"
             type="text"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="language" className="block text-sm font-medium text-gray-700">Quantidade de paginas</label>
+          <input
+            {...register("pageCount")}
+            id="pageCount"
+            name="pageCount"
+            type="number"
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
           />
         </div>
@@ -115,16 +174,16 @@ export default function AddBook() {
         </div>
 
         <div className="flex items-center">
-            <input
-                {...register("featured")}
-                id="featured"
-                name="featured"
-                type="checkbox"
-                className="h-4 w-4 text-stone-600 focus:ring-stone-500 border-gray-300 rounded"
-            />
-            <label htmlFor="featured" className="ml-2 block text-sm text-gray-900">
-                Em promoção?
-            </label>
+          <input
+            {...register("featured")}
+            id="featured"
+            name="featured"
+            type="checkbox"
+            className="h-4 w-4 text-stone-600 focus:ring-stone-500 border-gray-300 rounded"
+          />
+          <label htmlFor="featured" className="ml-2 block text-sm text-gray-900">
+            Em promoção?
+          </label>
         </div>
 
         <div className="md:col-span-2">
@@ -165,7 +224,7 @@ export default function AddBook() {
             type="submit"
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-stone-600 hover:bg-stone-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-500"
           >
-            Salvar alterações
+            Salvar livro
           </button>
         </div>
       </form>

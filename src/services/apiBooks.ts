@@ -1,3 +1,5 @@
+import type {BookType} from "@/types/BookType.ts";
+
 export async function getBooks(): Promise<any> {
   const response = await fetch('http://localhost:3000/books');
   const data = await response.json();
@@ -16,11 +18,6 @@ export async function getSearchBook(page: number, limit: number, params: string 
   return data
 }
 
-// export async function getCategoryBook(page: number, limit: number, params: string): Promise<any> {
-//   const response = await fetch(`http://localhost:3000/books/${page}/${limit}/category?key=${params}`);
-//   const data = await response.json()
-//   return data
-// }
 
 export async function getBook(id: string): Promise<any> {
   const response = await fetch(`http://localhost:3000/books/${id}`);
@@ -50,4 +47,27 @@ export async function convertImg(base: string) {
   }
   const blob = new Blob([u8arr], {type: mime});
   return URL.createObjectURL(blob)
+}
+
+export async function createBook(book: BookType) {
+  const response = await fetch('http://localhost:3000/books', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(book),
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to create post');
+  }
+
+  const data = await response.json();
+
+  if (response.ok) {
+    console.log('Livro criado com sucesso!');
+  } else {
+    console.error(data.message || 'Erro ao criar livro');
+  }
+  return data;
 }

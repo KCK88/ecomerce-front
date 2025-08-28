@@ -4,11 +4,15 @@ import {getPagedBook} from "@/services/apiBooks.ts";
 import type {BookType} from "@/types/BookType.ts";
 import {useMemo, useState} from "react";
 import AddBook from "@/components/ui/AddBook.tsx";
+import EditBook from "@/components/ui/BookEdit.tsx";
+import type {UserType} from "@/types/UserType.ts";
+import NotFound from "@/components/pages/NotFound.tsx";
 
 
 export function BackOffice() {
   const [searchParams] = useSearchParams();
-  const [isOpenBooks, setIsOpenBooks] = useState(false)
+  const [isOpenAdd, setIsOpenAdd] = useState(false)
+  const [isOpenEdit, setIsOpenEdit] = useState(false)
 
   const page = Number(searchParams.get('page'))
   const limit = Number(searchParams.get('limit'))
@@ -19,19 +23,27 @@ export function BackOffice() {
     }
   })
 
+  const storedUser = localStorage.getItem("user");
+  const user: UserType | null = storedUser ? JSON.parse(storedUser) : null;
+
+  const isAdmin = user?.role === "admin";
+
+
   const books: BookType[] = useMemo(() => data?.data || [], [data?.data]);
+
+  if (!isAdmin || !user) return <NotFound/>
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">BackOffice - Gerenciamento de Livros</h1>
 
       <div className="flex justify-end mb-4">
-        <button onClick={()=> setIsOpenBooks(!isOpenBooks)} className="bg-stone-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          Adicionar Novo Livro
+        <button onClick={()=> setIsOpenAdd(!isOpenAdd)} className="bg-stone-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Adicionar livros
         </button>
       </div>
 
-      {isOpenBooks && <AddBook/>}
+      {isOpenAdd && <AddBook/>}
 
       <div className="bg-white shadow-md rounded my-6">
         <table className="min-w-full table-auto">
@@ -54,13 +66,14 @@ export function BackOffice() {
             <td className="py-3 px-6 text-center">R$ {book.price.toFixed(2)}</td>
             <td className="py-3 px-6 text-center">
               <div className="flex item-center justify-center">
-                <button className="w-16 h-8 rounded-full bg-green-500 text-white mr-2">Editar</button>
+                <button onClick={()=> setIsOpenEdit(!isOpenEdit)} className="w-16 h-8 rounded-full bg-green-500 text-white mr-2">Editar</button>
                 <button className="w-8 h-8 rounded-full bg-red-500 text-white">X</button>
               </div>
             </td>
           </tr>))}
           </tbody>
         </table>
+          {isOpenEdit && <EditBook/>}
       </div>
 
 
