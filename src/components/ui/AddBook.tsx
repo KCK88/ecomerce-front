@@ -1,4 +1,4 @@
-import {type SubmitHandler, useForm} from "react-hook-form";
+import {Controller, type SubmitHandler, useForm} from "react-hook-form";
 import type {BookType} from "@/types/BookType.ts";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {createBook} from "@/services/apiBooks.ts";
@@ -7,9 +7,15 @@ import type {CategoryType} from "@/types/CategoryType.ts";
 import {useMemo} from "react";
 import type {AuthorType} from "@/types/AutorType.ts";
 import {getAuthors} from "@/services/apiAuthors.ts";
+import Select from "react-select";
+
+type OptionType<T> = {
+  label: string;
+  value: T;
+};
 
 export default function AddBook() {
-  const {register, handleSubmit, formState: {errors}} = useForm<BookType>();
+  const {register, control, handleSubmit, formState: {errors}} = useForm<BookType>();
 
   const {mutate} = useMutation({
     mutationFn: createBook,
@@ -21,18 +27,27 @@ export default function AddBook() {
     }
   })
 
-  const {data: category} = useQuery({
+  const {data: category, isLoading: loadingCategories} = useQuery({
     queryKey: ['categories'],
     queryFn: getCategories
   })
 
-  const {data: author} = useQuery({
+  const {data: author, isLoading: loadingAuthors, isError: authorError} = useQuery({
     queryKey: ['authors'],
     queryFn: getAuthors
   })
 
   const categories: CategoryType[] = useMemo(() => category?.data || [], [category?.data])
   const authors: AuthorType[] = useMemo(() => author?.authors || [], [author?.authors])
+  const authorOptions = authors.map((author) => ({
+    label: author.name,
+    value: author,
+  }));
+
+  const categoryOptions = categories.map((category) => ({
+    label: category.genre,
+    value: category,
+  }));
 
   const onSubmit: SubmitHandler<BookType> = (data) => {
     console.log(data);
@@ -57,29 +72,42 @@ export default function AddBook() {
 
         <div className="md:col-span-1">
           <label htmlFor="authors" className="block text-sm font-medium text-gray-700">Autor(es)</label>
-          <select
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
-            {...register("authors")}
-            multiple={true}
-          >
-            {/*<option value="">Todas os autores</option>*/}
-            {authors.map((author: AuthorType) => (
-              <option key={author._id} value={author.name}>{author.name}</option>
-            ))}
-          </select>
+          <Controller
+            name="authors"
+            control={control}
+            render={({ field }) => (
+              <Select <OptionType<AuthorType>>
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
+                {...field}
+                options={authorOptions}
+                isLoading={loadingAuthors}
+                isClearable
+                isMulti
+                placeholder={loadingAuthors ? 'Carregando...' : 'Selecione uma categoria'}
+                noOptionsMessage={() => (authorError ? 'Erro ao carregar' : 'Nenhuma opção')}
+              />
+            )}
+          />
         </div>
 
         <div className="md:col-span-1">
           <label htmlFor="categories" className="block text-sm font-medium text-gray-700">Categoria</label>
-          <select
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
-            {...register("categories")}
-          >
-            <option value="">Todas as categorias</option>
-            {categories.map((category: CategoryType) => (
-              <option key={category.id} value={category.genre}>{category.genre}</option>
-            ))}
-          </select>
+          <Controller
+            name="categories"
+            control={control}
+            render={({ field }) => (
+              <Select <OptionType<CategoryType>>
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
+                {...field}
+                options={categoryOptions}
+                isLoading={loadingCategories}
+                isClearable
+                isMulti
+                placeholder={loadingAuthors ? 'Carregando...' : 'Selecione uma categoria'}
+                noOptionsMessage={() => (authorError ? 'Erro ao carregar' : 'Nenhuma opção')}
+              />
+            )}
+          />
         </div>
 
         <div>

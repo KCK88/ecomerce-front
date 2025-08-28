@@ -7,12 +7,15 @@ import AddBook from "@/components/ui/AddBook.tsx";
 import EditBook from "@/components/ui/BookEdit.tsx";
 import type {UserType} from "@/types/UserType.ts";
 import NotFound from "@/components/pages/NotFound.tsx";
+import ModalOrder from "@/components/ui/ModalOrder.tsx";
 
 
 export function BackOffice() {
   const [searchParams] = useSearchParams();
   const [isOpenAdd, setIsOpenAdd] = useState(false)
   const [isOpenEdit, setIsOpenEdit] = useState(false)
+
+  const closeModal = () => setIsOpenAdd(false);
 
   const page = Number(searchParams.get('page'))
   const limit = Number(searchParams.get('limit'))
@@ -38,42 +41,51 @@ export function BackOffice() {
       <h1 className="text-2xl font-bold mb-4">BackOffice - Gerenciamento de Livros</h1>
 
       <div className="flex justify-end mb-4">
-        <button onClick={()=> setIsOpenAdd(!isOpenAdd)} className="bg-stone-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button onClick={() => setIsOpenAdd(!isOpenAdd)}
+                className="bg-stone-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           Adicionar livros
         </button>
       </div>
 
-      {isOpenAdd && <AddBook/>}
+      {isOpenAdd && <ModalOrder
+          isOpen={isOpenAdd}
+          onClose={closeModal}
+          className={'w-full max-w-280 shadow-sm'}
+      >
+          <AddBook/>
+      </ModalOrder>}
 
       <div className="bg-white shadow-md rounded my-6">
         <table className="min-w-full table-auto">
           <thead>
 
-            <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-              <th className="py-3 px-6 text-left">Título</th>
-              <th className="py-3 px-6 text-left">Autor</th>
-              <th className="py-3 px-6 text-center">Preço</th>
-              <th className="py-3 px-6 text-center">Ações</th>
-            </tr>
+          <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+            <th className="py-3 px-6 text-left">Título</th>
+            <th className="py-3 px-6 text-left">Autor</th>
+            <th className="py-3 px-6 text-center">Preço</th>
+            <th className="py-3 px-6 text-center">Ações</th>
+          </tr>
           </thead>
           <tbody className="text-gray-600 text-sm font-light">
 
           {
             books.map((book: BookType) => (
-            <tr key={book._id} className="border-b border-gray-200 hover:bg-gray-100">
-            <td className="py-3 px-6 text-left whitespace-nowrap">{book.title}</td>
-            <td className="py-3 px-6 text-left">{book.authors[0].name}</td>
-            <td className="py-3 px-6 text-center">R$ {book.price.toFixed(2)}</td>
-            <td className="py-3 px-6 text-center">
-              <div className="flex item-center justify-center">
-                <button onClick={()=> setIsOpenEdit(!isOpenEdit)} className="w-16 h-8 rounded-full bg-green-500 text-white mr-2">Editar</button>
-                <button className="w-8 h-8 rounded-full bg-red-500 text-white">X</button>
-              </div>
-            </td>
-          </tr>))}
+              <tr key={book._id} className="border-b border-gray-200 hover:bg-gray-100">
+                <td className="py-3 px-6 text-left whitespace-nowrap">{book.title}</td>
+                <td className="py-3 px-6 text-left">{book.authors[0].name}</td>
+                <td className="py-3 px-6 text-center">R$ {book.price.toFixed(2)}</td>
+                <td className="py-3 px-6 text-center">
+                  <div className="flex item-center justify-center">
+                    <button onClick={() => setIsOpenEdit(!isOpenEdit)}
+                            className="w-16 h-8 rounded-full bg-green-500 text-white mr-2">Editar
+                    </button>
+                    <button className="w-8 h-8 rounded-full bg-red-500 text-white">X</button>
+                  </div>
+                </td>
+              </tr>))}
           </tbody>
         </table>
-          {isOpenEdit && <EditBook/>}
+        {isOpenEdit && <EditBook/>}
       </div>
 
 
@@ -85,7 +97,8 @@ export function BackOffice() {
             <form>
 
               <div className="flex justify-end mt-4">
-                <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-2">Cancelar</button>
+                <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-2">Cancelar
+                </button>
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Salvar</button>
               </div>
             </form>
