@@ -8,13 +8,10 @@ import {useMemo} from "react";
 import type {AuthorType} from "@/types/AutorType.ts";
 import {getAuthors} from "@/services/apiAuthors.ts";
 import Select from "react-select";
+import type {ActionProp, OptionType} from "@/types/SelectTypes.ts";
 
-type OptionType<T> = {
-  label: string;
-  value: T;
-};
 
-export default function AddBook() {
+export default function AddBook({action}: ActionProp) {
   const {register, control, handleSubmit, formState: {errors}} = useForm<BookType>();
 
   const {mutate} = useMutation({
@@ -50,13 +47,12 @@ export default function AddBook() {
   }));
 
   const onSubmit: SubmitHandler<BookType> = (data) => {
-    console.log(data);
     mutate(data);
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4">Adicionar livro</h1>
+      <h1 className="text-3xl font-bold mb-4">{`${action} livro`}</h1>
       <form onSubmit={handleSubmit(onSubmit)}
             className="bg-white shadow-md rounded-lg p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="md:col-span-2">
@@ -75,8 +71,8 @@ export default function AddBook() {
           <Controller
             name="authors"
             control={control}
-            render={({ field }) => (
-              <Select <OptionType<AuthorType>>
+            render={({field}) => (
+              <Select<OptionType<AuthorType>>
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
                 {...field}
                 options={authorOptions}
@@ -95,8 +91,8 @@ export default function AddBook() {
           <Controller
             name="categories"
             control={control}
-            render={({ field }) => (
-              <Select <OptionType<CategoryType>>
+            render={({field}) => (
+              <Select<OptionType<CategoryType>>
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
                 {...field}
                 options={categoryOptions}

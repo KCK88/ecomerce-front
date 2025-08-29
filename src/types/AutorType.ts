@@ -6,4 +6,5 @@ export type AuthorType = {
   photo: string,
   website: string | null,
   books: string[],
+  isMulti: true,
 }

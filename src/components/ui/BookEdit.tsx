@@ -1,11 +1,61 @@
-import {type SubmitHandler, useForm} from "react-hook-form";
+import {Controller, type SubmitHandler, useForm} from "react-hook-form";
 import type {BookType} from "@/types/BookType.ts";
+import Select from "react-select";
+import type {AuthorType} from "@/types/AutorType.ts";
+import type {CategoryType} from "@/types/CategoryType.ts";
+import {QueryClient, useMutation, useQuery} from "@tanstack/react-query";
+import {updateBook} from "@/services/apiBooks.ts";
+import {getCategories} from "@/services/apiCategories.ts";
+import {getAuthors} from "@/services/apiAuthors.ts";
+import {useMemo} from "react";
+import type {OptionType} from "@/types/SelectTypes.ts";
 
-export default function EditBook() {
-  const {register, handleSubmit, formState: { errors }} = useForm<BookType>();
+type EditBookProps = {
+  book: BookType
+}
+
+export default function EditBook({book}: EditBookProps) {
+  const {register, control, handleSubmit, formState: { errors }} = useForm<BookType>();
+
+  const queryClient = new QueryClient({})
+
+
+  const {mutate} = useMutation({
+    mutationFn: updateBook,
+    onSuccess: (data) => {
+      console.log(data);
+      queryClient.invalidateQueries({queryKey: ['booksBko']});
+    },
+    onError: (error) => {
+      console.log(error);
+    }
+  })
+
+  const {data: category, isLoading: loadingCategories} = useQuery({
+    queryKey: ['categories'],
+    queryFn: getCategories
+  })
+
+  const {data: author, isLoading: loadingAuthors, isError: authorError} = useQuery({
+    queryKey: ['authors'],
+    queryFn: getAuthors
+  })
+
+  const categories: CategoryType[] = useMemo(() => category?.data || [], [category?.data])
+  const authors: AuthorType[] = useMemo(() => author?.authors || [], [author?.authors])
+  const authorOptions = authors.map((author) => ({
+    label: author.name,
+    value: author,
+  }));
+
+  const categoryOptions = categories.map((category) => ({
+    label: category.genre,
+    value: category,
+  }));
+
 
   const onSubmit: SubmitHandler<BookType> = (data) => {
-    console.log(data);
+    mutate(data)
   };
 
   return (
@@ -19,21 +69,64 @@ export default function EditBook() {
             id="title"
             name="title"
             type="text"
+            defaultValue={book.title}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
           />
         </div>
 
         <div className="md:col-span-2">
-          <label htmlFor="author" className="block text-sm font-medium text-gray-700">Autor(es)</label>
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700">Titulo</label>
           <input
-            {...register("authors")}
-            id="author"
-            name="author"
+            {...register("_id")}
+            id="_id"
+            name="_id"
+            hidden
             type="text"
+            defaultValue={book._id}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
           />
         </div>
-        
+
+        <div className="md:col-span-1">
+          <label htmlFor="authors" className="block text-sm font-medium text-gray-700">Autor(es)</label>
+          <Controller
+            name="authors"
+            control={control}
+            render={({field}) => (
+              <Select<OptionType<AuthorType>>
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
+                {...field}
+                options={authorOptions}
+                isLoading={loadingAuthors}
+                isClearable
+                isMulti
+                placeholder={loadingAuthors ? 'Carregando...' : 'Selecione uma categoria'}
+                noOptionsMessage={() => (authorError ? 'Erro ao carregar' : 'Nenhuma opção')}
+              />
+            )}
+          />
+        </div>
+
+        <div className="md:col-span-1">
+          <label htmlFor="categories" className="block text-sm font-medium text-gray-700">Categoria</label>
+          <Controller
+            name="categories"
+            control={control}
+            render={({field}) => (
+              <Select<OptionType<CategoryType>>
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
+                {...field}
+                options={categoryOptions}
+                isLoading={loadingCategories}
+                isClearable
+                isMulti
+                placeholder={loadingAuthors ? 'Carregando...' : 'Selecione uma categoria'}
+                noOptionsMessage={() => (authorError ? 'Erro ao carregar' : 'Nenhuma opção')}
+              />
+            )}
+          />
+        </div>
+
         <div>
           <label htmlFor="publisher" className="block text-sm font-medium text-gray-700">Editora</label>
           <input
@@ -41,6 +134,7 @@ export default function EditBook() {
             id="publisher"
             name="publisher"
             type="text"
+            defaultValue={book.publisher}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
           />
         </div>
@@ -63,6 +157,7 @@ export default function EditBook() {
             id="language"
             name="language"
             type="text"
+            defaultValue={book.language}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
           />
         </div>
@@ -74,6 +169,7 @@ export default function EditBook() {
             id="description"
             name="description"
             rows={5}
+            defaultValue={book.description}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
           />
         </div>
@@ -85,6 +181,7 @@ export default function EditBook() {
             id="price"
             name="price"
             type="number"
+            defaultValue={book.price}
             step="0.01"
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
           />
@@ -97,6 +194,7 @@ export default function EditBook() {
             id="stock"
             name="stock"
             type="number"
+            defaultValue={book.stock}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
           />
         </div>
@@ -108,6 +206,7 @@ export default function EditBook() {
             id="discount"
             name="discount"
             type="number"
+            defaultValue={book.discount*100}
             min="0"
             max="100"
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
@@ -120,6 +219,7 @@ export default function EditBook() {
                 id="featured"
                 name="featured"
                 type="checkbox"
+                value="true"
                 className="h-4 w-4 text-stone-600 focus:ring-stone-500 border-gray-300 rounded"
             />
             <label htmlFor="featured" className="ml-2 block text-sm text-gray-900">

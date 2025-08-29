@@ -14,8 +14,13 @@ export function BackOffice() {
   const [searchParams] = useSearchParams();
   const [isOpenAdd, setIsOpenAdd] = useState(false)
   const [isOpenEdit, setIsOpenEdit] = useState(false)
+  const [selectedBook, setSelectedBook] = useState<BookType | null>(null);
 
   const closeModal = () => setIsOpenAdd(false);
+  const closeEditModal = () => {
+    setIsOpenEdit(false);
+    setSelectedBook(null);
+  }
 
   const page = Number(searchParams.get('page'))
   const limit = Number(searchParams.get('limit'))
@@ -52,8 +57,18 @@ export function BackOffice() {
           onClose={closeModal}
           className={'w-full max-w-280 shadow-sm'}
       >
-          <AddBook/>
+          <AddBook action={"Adicionar"}/>
       </ModalOrder>}
+
+      {isOpenEdit && selectedBook && (
+          <ModalOrder
+              isOpen={isOpenEdit}
+              onClose={closeEditModal}
+              className={'w-full max-w-280 shadow-sm'}
+          >
+              <EditBook book={selectedBook}/>
+          </ModalOrder>
+      )}
 
       <div className="bg-white shadow-md rounded my-6">
         <table className="min-w-full table-auto">
@@ -76,16 +91,20 @@ export function BackOffice() {
                 <td className="py-3 px-6 text-center">R$ {book.price.toFixed(2)}</td>
                 <td className="py-3 px-6 text-center">
                   <div className="flex item-center justify-center">
-                    <button onClick={() => setIsOpenEdit(!isOpenEdit)}
+                    <button onClick={() => {
+                      setSelectedBook(book);
+                      setIsOpenEdit(true);
+                    }}
                             className="w-16 h-8 rounded-full bg-green-500 text-white mr-2">Editar
                     </button>
                     <button className="w-8 h-8 rounded-full bg-red-500 text-white">X</button>
                   </div>
                 </td>
-              </tr>))}
+              </tr>
+            ))}
           </tbody>
         </table>
-        {isOpenEdit && <EditBook/>}
+        {/*{isOpenEdit && <EditBook/>}*/}
       </div>
 
 

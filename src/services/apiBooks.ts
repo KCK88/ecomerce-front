@@ -71,3 +71,27 @@ export async function createBook(book: BookType) {
   }
   return data;
 }
+
+export async function updateBook(book: BookType): Promise<BookType> {
+  console.log(book);
+  const response = await fetch(`http://localhost:3000/books/${book._id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(book),
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to create patch');
+  }
+
+  const data = await response.json();
+
+  if (response.ok) {
+    console.log('Livro editado com sucesso!');
+  } else {
+    console.error(data.message || 'Erro ao criar livro');
+  }
+  return data;
+}
