@@ -50,6 +50,7 @@ export async function convertImg(base: string) {
 }
 
 export async function createBook(book: BookType) {
+  console.log(book);
   const response = await fetch('http://localhost:3000/books', {
     method: 'POST',
     headers: {

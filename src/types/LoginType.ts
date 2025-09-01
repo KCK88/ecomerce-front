@@ -1,4 +1,4 @@
-export type PostType = {
+export type LoginType = {
   email: string;
   password: string;
 }

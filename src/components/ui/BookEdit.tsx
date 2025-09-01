@@ -55,6 +55,7 @@ export default function EditBook({book}: EditBookProps) {
 
 
   const onSubmit: SubmitHandler<BookType> = (data) => {
+    console.log(data);
     mutate(data)
   };
 

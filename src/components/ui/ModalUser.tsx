@@ -20,7 +20,7 @@ export default function ModalUser({ isLoggedIn, isAdmin }: { isLoggedIn: boolean
           <div className="flex items-center gap-1 text-sm text-stone-700">
             <span>É novo aqui?</span>
             <a
-              href="#"
+              href="/signup"
               className="font-medium text-stone-600 hover:text-stone-500 transition"
             >Comece aqui
             </a>
