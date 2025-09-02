@@ -87,7 +87,7 @@ export function BackOffice() {
             books.map((book: BookType) => (
               <tr key={book._id} className="border-b border-gray-200 hover:bg-gray-100">
                 <td className="py-3 px-6 text-left whitespace-nowrap">{book.title}</td>
-                <td className="py-3 px-6 text-left">{book.authors[0].name}</td>
+                <td className="py-3 px-6 text-left">{book.authors[0].name ? book.authors[0].name : 'author placeholder'}</td>
                 <td className="py-3 px-6 text-center">R$ {book.price.toFixed(2)}</td>
                 <td className="py-3 px-6 text-center">
                   <div className="flex item-center justify-center">
