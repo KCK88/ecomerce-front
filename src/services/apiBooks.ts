@@ -1,6 +1,6 @@
 import type {BookType} from "@/types/BookType.ts";
 
-export async function getBooks(): Promise<any> {
+export async function getBooks(): Promise<BookType[]> {
   const response = await fetch('http://localhost:3000/books');
   const data = await response.json();
   return data;
@@ -12,19 +12,19 @@ export async function getImageBook(bookId: string): Promise<string> {
   return data.image
 }
 
-export async function getSearchBook(page: number, limit: number, params: string | null, category: string | null): Promise<any> {
+export async function getSearchBook(page: number, limit: number, params: string | null, category: string | null): Promise<BookType[]> {
   const response = await fetch(`http://localhost:3000/books/${page}/${limit}/search?params=${params}&genre=${category}`);
   const data = await response.json()
   return data
 }
 
 
-export async function getBook(id: string): Promise<any> {
+export async function getBook(id: string): Promise<BookType> {
   const response = await fetch(`http://localhost:3000/books/${id}`);
   const data = await response.json()
   return data
 }
-export async function getPagedBook(page: number, limit: number): Promise<any> {
+export async function getPagedBook(page: number, limit: number): Promise<BookType[]> {
   const response = await fetch(`http://localhost:3000/books/${page}/${limit}/booksBko`);
   const data = await response.json()
   return data
@@ -49,18 +49,68 @@ export async function convertImg(base: string) {
   return URL.createObjectURL(blob)
 }
 
+async function createBookFormData(book: BookType): Promise<FormData> {
+    const formData = new FormData();
+
+    const excludeFields = ['coverImage', 'images', 'id', '_id', '__v', 'createdAt', 'search'];
+
+    for (const [key, value] of Object.entries(book)) {
+        if (excludeFields.includes(key) || value === undefined || value === null) {
+            continue;
+        }
+
+        if (typeof value === 'string' && value) {
+            formData.append(key, value);
+        } else if (typeof value === 'number' || typeof value === 'boolean') {
+            formData.append(key, value.toString());
+        } else if (typeof value === 'object') {
+            formData.append(key, JSON.stringify(value));
+        }
+    }
+
+    if (book.coverImage) {
+        if (book.coverImage instanceof File) {
+            formData.append('coverImage', book.coverImage);
+        } else if (typeof book.coverImage === 'string' && book.coverImage.startsWith('data:')) {
+            const response = await fetch(book.coverImage);
+            const blob = await response.blob();
+            formData.append('coverImage', blob, 'cover.jpg');
+        } else {
+            formData.append('coverImage', book.coverImage);
+        }
+    }
+
+    if (book.images && book.images.length > 0) {
+        for (let i = 0; i < book.images.length; i++) {
+            const image = book.images[i];
+            if (image instanceof File) {
+                formData.append('images', image);
+            } else if (typeof image === 'string' && image.startsWith('data:')) {
+                const response = await fetch(image);
+                const blob = await response.blob();
+                formData.append('images', blob, `image-${i}.jpg`);
+            } else {
+                formData.append('images', image);
+            }
+        }
+    }
+
+    return formData;
+}
+
 export async function createBook(book: BookType) {
   console.log(book);
+
+  const formData = await createBookFormData(book);
+
   const response = await fetch('http://localhost:3000/books', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(book),
+    body: formData,
     credentials: 'include',
-  });
+  } as RequestInit);
+
   if (!response.ok) {
-    throw new Error('Failed to create post');
+    throw new Error('Failed to create book');
   }
 
   const data = await response.json();
@@ -75,16 +125,17 @@ export async function createBook(book: BookType) {
 
 export async function updateBook(book: BookType): Promise<BookType> {
   console.log(book);
+
+  const formData = await createBookFormData(book);
+
   const response = await fetch(`http://localhost:3000/books/${book._id}`, {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(book),
+    body: formData,
     credentials: 'include',
-  });
+  } as RequestInit);
+
   if (!response.ok) {
-    throw new Error('Failed to create patch');
+    throw new Error('Failed to update book');
   }
 
   const data = await response.json();
@@ -92,7 +143,7 @@ export async function updateBook(book: BookType): Promise<BookType> {
   if (response.ok) {
     console.log('Livro editado com sucesso!');
   } else {
-    console.error(data.message || 'Erro ao criar livro');
+    console.error(data.message || 'Erro ao editar livro');
   }
   return data;
 }

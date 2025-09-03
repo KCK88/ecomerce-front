@@ -48,6 +48,8 @@ export default function EditBook({book}: EditBookProps) {
     value: author,
   }));
 
+  const defaultAuthors = authorOptions.map((author)=> author.value.name)
+
   const categoryOptions = categories.map((category) => ({
     label: category.genre,
     value: category,
@@ -61,7 +63,7 @@ export default function EditBook({book}: EditBookProps) {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4">Edit Book</h1>
+      <h1 className="text-3xl font-bold mb-4">Editar livro</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white shadow-md rounded-lg p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="md:col-span-2">
           <label htmlFor="title" className="block text-sm font-medium text-gray-700">Titulo</label>
@@ -101,7 +103,7 @@ export default function EditBook({book}: EditBookProps) {
                 isLoading={loadingAuthors}
                 isClearable
                 isMulti
-                placeholder={loadingAuthors ? 'Carregando...' : 'Selecione uma categoria'}
+                placeholder={loadingAuthors ? 'Carregando...' : 'Selecione auto(res)'}
                 noOptionsMessage={() => (authorError ? 'Erro ao carregar' : 'Nenhuma opção')}
               />
             )}
@@ -121,7 +123,7 @@ export default function EditBook({book}: EditBookProps) {
                 isLoading={loadingCategories}
                 isClearable
                 isMulti
-                placeholder={loadingAuthors ? 'Carregando...' : 'Selecione uma categoria'}
+                placeholder={loadingAuthors ? 'Carregando...' : 'Selecione categoria(s)'}
                 noOptionsMessage={() => (authorError ? 'Erro ao carregar' : 'Nenhuma opção')}
               />
             )}

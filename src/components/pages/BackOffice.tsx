@@ -28,7 +28,8 @@ export function BackOffice() {
     queryKey: ['booksBko', page, limit],
     queryFn: async () => {
       return await getPagedBook(page, limit)
-    }
+    },
+
   })
 
   const storedUser = localStorage.getItem("user");
@@ -45,11 +46,23 @@ export function BackOffice() {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">BackOffice - Gerenciamento de Livros</h1>
 
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-end mb-4 gap-4">
+
         <button onClick={() => setIsOpenAdd(!isOpenAdd)}
                 className="bg-stone-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           Adicionar livros
         </button>
+
+        <button onClick={() => setIsOpenAdd(!isOpenAdd)}
+                className="bg-stone-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Adicionar autor
+        </button>
+
+        <button onClick={() => setIsOpenAdd(!isOpenAdd)}
+                className="bg-stone-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Adicionar categoria
+        </button>
+
       </div>
 
       {isOpenAdd && <ModalOrder
@@ -87,7 +100,7 @@ export function BackOffice() {
             books.map((book: BookType) => (
               <tr key={book._id} className="border-b border-gray-200 hover:bg-gray-100">
                 <td className="py-3 px-6 text-left whitespace-nowrap">{book.title}</td>
-                <td className="py-3 px-6 text-left">{book.authors[0].name ? book.authors[0].name : 'author placeholder'}</td>
+                <td className="py-3 px-6 text-left">{book.authors.length > 0 ? book.authors[0].name : 'N/A'}</td>
                 <td className="py-3 px-6 text-center">R$ {book.price.toFixed(2)}</td>
                 <td className="py-3 px-6 text-center">
                   <div className="flex item-center justify-center">

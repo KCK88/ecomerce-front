@@ -79,7 +79,7 @@ export default function AddBook({action}: ActionProp) {
                 isLoading={loadingAuthors}
                 isClearable
                 isMulti
-                placeholder={loadingAuthors ? 'Carregando...' : 'Selecione uma categoria'}
+                placeholder={loadingAuthors ? 'Carregando...' : 'Selecione auto(res)'}
                 noOptionsMessage={() => (authorError ? 'Erro ao carregar' : 'Nenhuma opção')}
               />
             )}
@@ -99,7 +99,7 @@ export default function AddBook({action}: ActionProp) {
                 isLoading={loadingCategories}
                 isClearable
                 isMulti
-                placeholder={loadingAuthors ? 'Carregando...' : 'Selecione uma categoria'}
+                placeholder={loadingAuthors ? 'Carregando...' : 'Selecione categoria(s)'}
                 noOptionsMessage={() => (authorError ? 'Erro ao carregar' : 'Nenhuma opção')}
               />
             )}
