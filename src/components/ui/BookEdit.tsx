@@ -48,8 +48,6 @@ export default function EditBook({book}: EditBookProps) {
     value: author,
   }));
 
-  const defaultAuthors = authorOptions.map((author)=> author.value.name)
-
   const categoryOptions = categories.map((category) => ({
     label: category.genre,
     value: category,
