@@ -76,7 +76,7 @@ export default function EditBook({book}: EditBookProps) {
         </div>
 
         <div className="md:col-span-2">
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700">Titulo</label>
+          <label htmlFor="_id" className="block text-sm font-medium text-gray-700">Titulo</label>
           <input
             {...register("_id")}
             id="_id"

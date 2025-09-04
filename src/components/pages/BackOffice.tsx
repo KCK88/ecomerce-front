@@ -8,15 +8,21 @@ import EditBook from "@/components/ui/BookEdit.tsx";
 import type {UserType} from "@/types/UserType.ts";
 import NotFound from "@/components/pages/NotFound.tsx";
 import ModalOrder from "@/components/ui/ModalOrder.tsx";
+import AddAuthor from "@/components/ui/AddAuthor.tsx";
+import AddCategory from "@/components/ui/AddCategory.tsx";
 
 
 export function BackOffice() {
   const [searchParams] = useSearchParams();
   const [isOpenAdd, setIsOpenAdd] = useState(false)
+  const [isOpenAuthor, setIsOpenAuthor] = useState(false)
+  const [isOpenCategory, setIsOpenCategory] = useState(false)
   const [isOpenEdit, setIsOpenEdit] = useState(false)
   const [selectedBook, setSelectedBook] = useState<BookType | null>(null);
 
   const closeModal = () => setIsOpenAdd(false);
+  const closeAuthorModal = () => setIsOpenAuthor(false);
+  const closeCategoryModal = () => setIsOpenCategory(false);
   const closeEditModal = () => {
     setIsOpenEdit(false);
     setSelectedBook(null);
@@ -53,12 +59,12 @@ export function BackOffice() {
           Adicionar livros
         </button>
 
-        <button onClick={() => setIsOpenAdd(!isOpenAdd)}
+        <button onClick={() => setIsOpenAuthor(!isOpenAuthor)}
                 className="bg-stone-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           Adicionar autor
         </button>
 
-        <button onClick={() => setIsOpenAdd(!isOpenAdd)}
+        <button onClick={() => setIsOpenCategory(!isOpenCategory)}
                 className="bg-stone-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           Adicionar categoria
         </button>
@@ -71,6 +77,22 @@ export function BackOffice() {
           className={'w-full max-w-280 shadow-sm'}
       >
           <AddBook action={"Adicionar"}/>
+      </ModalOrder>}
+
+      {isOpenAuthor && <ModalOrder
+          isOpen={isOpenAuthor}
+          onClose={closeAuthorModal}
+          className={'w-full max-w-280 shadow-sm'}
+      >
+          <AddAuthor/>
+      </ModalOrder>}
+
+      {isOpenCategory && <ModalOrder
+          isOpen={isOpenCategory}
+          onClose={closeCategoryModal}
+          className={'w-full max-w-280 shadow-sm'}
+      >
+          <AddCategory/>
       </ModalOrder>}
 
       {isOpenEdit && selectedBook && (
@@ -108,9 +130,9 @@ export function BackOffice() {
                       setSelectedBook(book);
                       setIsOpenEdit(true);
                     }}
-                            className="w-16 h-8 rounded-full bg-green-500 text-white mr-2">Editar
+                            className="w-16 h-8 rounded-full bg-stone-500 hover:bg-blue-700 text-white mr-2">Editar
                     </button>
-                    <button className="w-8 h-8 rounded-full bg-red-500 text-white">X</button>
+                    <button className="w-8 h-8 rounded-full bg-red-500 hover:bg-red-700 text-white">X</button>
                   </div>
                 </td>
               </tr>
