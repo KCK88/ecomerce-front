@@ -41,8 +41,8 @@ export default function AddAuthor() {
           <label htmlFor="bio" className="block text-sm font-medium text-gray-700">Bio</label>
           <textarea
             {...register("bio")}
-            id="Bio"
-            name="Bio"
+            id="bio"
+            name="bio"
             rows={5}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
           />

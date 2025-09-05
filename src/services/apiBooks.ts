@@ -1,4 +1,4 @@
-import type {BookType} from "@/types/BookType.ts";
+import type {BookType, BookTypeReq} from "@/types/BookType.ts";
 
 export async function getBooks(): Promise<BookType[]> {
   const response = await fetch('http://localhost:3000/books');
@@ -50,7 +50,7 @@ export async function convertImg(base: string) {
   return URL.createObjectURL(blob)
 }
 
-async function createBookFormData(book: BookType): Promise<FormData> {
+async function createBookFormData(book: BookTypeReq): Promise<FormData> {
   const formData = new FormData();
 
   const excludeFields = ['coverImage', 'images', 'id', '_id', '__v', 'createdAt', 'search'];
@@ -74,7 +74,7 @@ async function createBookFormData(book: BookType): Promise<FormData> {
       formData.append('coverImage', book.coverImage);
     } else if (book.coverImage instanceof FileList && book.coverImage.length > 0) {
       formData.append('coverImage', book.coverImage[0]);
-    } else if (book.coverImage.startsWith('data:')) {
+    } else if (typeof book.coverImage === 'string' && book.coverImage.startsWith('data:')) {
       const response = await fetch(book.coverImage);
       const blob = await response.blob();
       formData.append('coverImage', blob, 'cover.jpg');
@@ -101,7 +101,7 @@ async function createBookFormData(book: BookType): Promise<FormData> {
   return formData;
 }
 
-export async function createBook(book: BookType) {
+export async function createBook(book: BookTypeReq) {
 
   const formData = await createBookFormData(book);
 
@@ -125,7 +125,7 @@ export async function createBook(book: BookType) {
   return data;
 }
 
-export async function updateBook(book: BookType): Promise<BookType> {
+export async function updateBook(book: BookTypeReq): Promise<BookType> {
 
   const formData = await createBookFormData(book);
 

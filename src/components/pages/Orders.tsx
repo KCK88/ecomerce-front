@@ -8,6 +8,7 @@ import type {Order} from "@/types/CartItem.ts";
 import ErrorBooks from "@/components/ui/ErrorBooks.tsx";
 import NoOrders from "@/components/ui/NoOrders.tsx";
 import CustButton from "@/components/ui/CustButton.tsx";
+import LoadingOrders from "@/components/ui/LoadingOrders.tsx";
 
 export default function Orders() {
   const [isOpen, setIsOpen] = useState(false)
@@ -45,6 +46,7 @@ export default function Orders() {
 
   if (isError) return <ErrorBooks/>
 
+if (isLoading) return <LoadingOrders />
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Meus Pedidos</h1>

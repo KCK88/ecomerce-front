@@ -56,6 +56,8 @@ export default function EditBook({book}: EditBookProps) {
 
   const onSubmit: SubmitHandler<BookType> = (data) => {
     console.log(data);
+    if (data.coverImage?.length === 0)  delete data.coverImage
+    console.log(data)
     mutate(data)
   };
 
