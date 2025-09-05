@@ -8,10 +8,10 @@ import {useMemo} from "react";
 import type {AuthorType} from "@/types/AutorType.ts";
 import {getAuthors} from "@/services/apiAuthors.ts";
 import Select from "react-select";
-import type {ActionProp, OptionType} from "@/types/SelectTypes.ts";
+import type {OptionType} from "@/types/SelectTypes.ts";
 
 
-export default function AddBook({action}: ActionProp) {
+export default function AddBook() {
   const {register, control, handleSubmit, formState: {errors}} = useForm<BookType>();
 
   const {mutate} = useMutation({
@@ -52,7 +52,7 @@ export default function AddBook({action}: ActionProp) {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4">{`${action} livro`}</h1>
+      <h1 className="text-3xl font-bold mb-4">Adicionar livro</h1>
       <form onSubmit={handleSubmit(onSubmit)}
             className="bg-white shadow-md rounded-lg p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="md:col-span-2">

@@ -148,3 +148,10 @@ export async function updateBook(book: BookTypeReq): Promise<BookType> {
   }
   return data;
 }
+
+export async function deleteBook(id: string): Promise<void> {
+  await fetch(`http://localhost:3000/books/${id}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  })
+}

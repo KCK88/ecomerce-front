@@ -10,105 +10,92 @@ import NotFound from "@/components/pages/NotFound.tsx";
 import ModalOrder from "@/components/ui/ModalOrder.tsx";
 import AddAuthor from "@/components/ui/AddAuthor.tsx";
 import AddCategory from "@/components/ui/AddCategory.tsx";
+import DeleteBook from "@/components/ui/DeleteBook.tsx";
 
 
 export function BackOffice() {
   const [searchParams] = useSearchParams();
-  const [isOpenAdd, setIsOpenAdd] = useState(false)
-  const [isOpenAuthor, setIsOpenAuthor] = useState(false)
-  const [isOpenCategory, setIsOpenCategory] = useState(false)
-  const [isOpenEdit, setIsOpenEdit] = useState(false)
-  const [selectedBook, setSelectedBook] = useState<BookType | null>(null);
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    type: null as 'addBook' | 'addAuthor' | 'addCategory' | 'editBook' | 'deleteBook' | null,
+    data: null as BookType | null
+  });
 
-  const closeModal = () => setIsOpenAdd(false);
-  const closeAuthorModal = () => setIsOpenAuthor(false);
-  const closeCategoryModal = () => setIsOpenCategory(false);
-  const closeEditModal = () => {
-    setIsOpenEdit(false);
-    setSelectedBook(null);
-  }
+  const page = Number(searchParams.get('page'));
+  const limit = Number(searchParams.get('limit'));
 
-  const page = Number(searchParams.get('page'))
-  const limit = Number(searchParams.get('limit'))
   const {data} = useQuery({
     queryKey: ['booksBko', page, limit],
     queryFn: async () => {
-      return await getPagedBook(page, limit)
+      return await getPagedBook(page, limit);
     },
-
-  })
+  });
 
   const storedUser = localStorage.getItem("user");
   const user: UserType | null = storedUser ? JSON.parse(storedUser) : null;
-
   const isAdmin = user?.role === "admin";
-
-
   const books: BookType[] = useMemo(() => data?.data || [], [data?.data]);
 
-  if (!isAdmin || !user) return <NotFound/>
+  const openModal = (
+    type: 'addBook' | 'addAuthor' | 'addCategory' | 'editBook' | 'deleteBook', data?: BookType) => {
+    setModalState({isOpen: true, type, data: data || null});
+  };
+
+  const closeModal = () => {
+    setModalState({isOpen: false, type: null, data: null});
+  };
+
+  if (!isAdmin || !user) return <NotFound/>;
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">BackOffice - Gerenciamento de Livros</h1>
 
       <div className="flex justify-end mb-4 gap-4">
-
-        <button onClick={() => setIsOpenAdd(!isOpenAdd)}
-                className="bg-stone-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button
+          onClick={() => openModal('addBook')}
+          className="bg-stone-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
           Adicionar livros
         </button>
 
-        <button onClick={() => setIsOpenAuthor(!isOpenAuthor)}
-                className="bg-stone-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button
+          onClick={() => openModal('addAuthor')}
+          className="bg-stone-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
           Adicionar autor
         </button>
 
-        <button onClick={() => setIsOpenCategory(!isOpenCategory)}
-                className="bg-stone-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button
+          onClick={() => openModal('addCategory')}
+          className="bg-stone-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
           Adicionar categoria
         </button>
-
       </div>
 
-      {isOpenAdd && <ModalOrder
-          isOpen={isOpenAdd}
+      {modalState.isOpen && (
+        <ModalOrder
+          isOpen={modalState.isOpen}
           onClose={closeModal}
           className={'w-full max-w-280 shadow-sm'}
-      >
-          <AddBook action={"Adicionar"}/>
-      </ModalOrder>}
+        >
+          {modalState.type === 'addBook' && <AddBook/>}
+          {modalState.type === 'addAuthor' && <AddAuthor/>}
+          {modalState.type === 'addCategory' && <AddCategory/>}
+          {modalState.type === 'editBook' && modalState.data && (
+            <EditBook book={modalState.data}/>
+          )}
+          {modalState.type === 'deleteBook' && modalState.data && (
 
-      {isOpenAuthor && <ModalOrder
-          isOpen={isOpenAuthor}
-          onClose={closeAuthorModal}
-          className={'w-full max-w-280 shadow-sm'}
-      >
-          <AddAuthor/>
-      </ModalOrder>}
-
-      {isOpenCategory && <ModalOrder
-          isOpen={isOpenCategory}
-          onClose={closeCategoryModal}
-          className={'w-full max-w-280 shadow-sm'}
-      >
-          <AddCategory/>
-      </ModalOrder>}
-
-      {isOpenEdit && selectedBook && (
-          <ModalOrder
-              isOpen={isOpenEdit}
-              onClose={closeEditModal}
-              className={'w-full max-w-280 shadow-sm'}
-          >
-              <EditBook book={selectedBook}/>
-          </ModalOrder>
+            <DeleteBook id={modalState.data.id} onClose={closeModal}/>
+          )}
+        </ModalOrder>
       )}
 
       <div className="bg-white shadow-md rounded my-6">
         <table className="min-w-full table-auto">
           <thead>
-
           <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
             <th className="py-3 px-6 text-left">Título</th>
             <th className="py-3 px-6 text-left">Autor</th>
@@ -117,47 +104,26 @@ export function BackOffice() {
           </tr>
           </thead>
           <tbody className="text-gray-600 text-sm font-light">
-
-          {
-            books.map((book: BookType) => (
-              <tr key={book._id} className="border-b border-gray-200 hover:bg-gray-100">
-                <td className="py-3 px-6 text-left whitespace-nowrap">{book.title}</td>
-                <td className="py-3 px-6 text-left">{book.authors.length > 0 ? book.authors[0].name : 'N/A'}</td>
-                <td className="py-3 px-6 text-center">R$ {book.price.toFixed(2)}</td>
-                <td className="py-3 px-6 text-center">
-                  <div className="flex item-center justify-center">
-                    <button onClick={() => {
-                      setSelectedBook(book);
-                      setIsOpenEdit(true);
-                    }}
-                            className="w-16 h-8 rounded-full bg-stone-500 hover:bg-blue-700 text-white mr-2">Editar
-                    </button>
-                    <button className="w-8 h-8 rounded-full bg-red-500 hover:bg-red-700 text-white">X</button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+          {books.map((book: BookType) => (
+            <tr key={book._id} className="border-b border-gray-200 hover:bg-gray-100">
+              <td className="py-3 px-6 text-left whitespace-nowrap">{book.title}</td>
+              <td className="py-3 px-6 text-left">{book.authors.length > 0 ? book.authors[0].name : 'N/A'}</td>
+              <td className="py-3 px-6 text-center">R$ {book.price.toFixed(2)}</td>
+              <td className="py-3 px-6 text-center">
+                <div className="flex item-center justify-center">
+                  <button
+                    onClick={() => openModal('editBook', book)}
+                    className="w-16 h-8 rounded-full bg-stone-500 hover:bg-blue-700 text-white mr-2"
+                  >
+                    Editar
+                  </button>
+                  <button onClick={()=> openModal("deleteBook", book)} className="w-8 h-8 rounded-full bg-red-500 hover:bg-red-700 text-white">X</button>
+                </div>
+              </td>
+            </tr>
+          ))}
           </tbody>
         </table>
-        {/*{isOpenEdit && <EditBook/>}*/}
-      </div>
-
-
-      <div className="hidden">
-        <div className="fixed inset-0 bg-black opacity-50"></div>
-        <div className="fixed inset-0 flex items-center justify-center">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-1/2">
-            <h2 className="text-2xl mb-4">Adicionar/Editar Livro</h2>
-            <form>
-
-              <div className="flex justify-end mt-4">
-                <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-2">Cancelar
-                </button>
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Salvar</button>
-              </div>
-            </form>
-          </div>
-        </div>
       </div>
     </div>
   );
